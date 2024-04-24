@@ -60,3 +60,6 @@ We welcome contributions from everyone. If you would like to contribute, please 
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
 4. Push to the Branch (`git push origin feature/AmazingFeature`).
 5. Open a pull request.
+
+## License
+This project is distribued under the [MIT](https://github.com/Hack-n-Leap/interpreter/blob/master/LICENSE) license.
