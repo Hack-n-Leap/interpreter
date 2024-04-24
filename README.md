@@ -35,18 +35,19 @@ public class Program
 {
     static void Main(string[] args)
     {
+        string line;
+        StringBuilder stringBuilder = new StringBuilder();
+
         Console.Clear();
         Console.Title = "Interpreter";
         Console.WriteLine("Code :");
-        StringBuilder stringBuilder = new StringBuilder();
-        string line;
-
+        
         while (!string.IsNullOrWhiteSpace(line = Console.ReadLine())) { stringBuilder.AppendLine(line); }
 
         string myCode = stringBuilder.ToString();
         Interpreter myInterpreter = new Interpreter();
 
-        Console.WriteLine("Exit : ");
+        Console.WriteLine("Exit :");
         myInterpreter.EvaluateCode(myCode);
     }
 }
