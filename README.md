@@ -14,3 +14,35 @@
 > [!WARNING]
 > **The project has just been launched.** 
 > **The basics of it have not yet been implemented.**
+
+## Use
+### How to use ?
+1. Build the solution
+2. Import the `.dll` file as a reference in your project
+3. Import the library in your code using `using InterpreterLib;`
+4. You can now use the library !
+
+### Sample use
+```csharp
+using InterpreterLib;
+using System.Text;
+
+public class Program
+{
+    static void Main(string[] args)
+    {
+        Console.Clear();
+        Console.Title = "Interpreteur";
+        Console.WriteLine("Code :");
+        StringBuilder stringBuilder = new StringBuilder();
+        string line;
+
+        while (!string.IsNullOrWhiteSpace(line = Console.ReadLine())) { stringBuilder.AppendLine(line); }
+
+        string myCode = stringBuilder.ToString();
+        Interpreter myInterpreter = new Interpreter();
+
+        Console.WriteLine("Exit : ");
+        myInterpreter.EvaluateCode(myCode);
+    }
+}```
