@@ -12,8 +12,7 @@
 </p>
 
 > [!WARNING]
-> **The project has just been launched.** 
-> **The basics of it have not yet been implemented.**
+> **Major changes to the way the project works!**
 
 ## About the project
 Hack'n'Leap's interpreter is the library used in the game of the same name to enable players to code their own functions.
