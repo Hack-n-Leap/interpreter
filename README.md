@@ -36,7 +36,7 @@ public class Program
     static void Main(string[] args)
     {
         Console.Clear();
-        Console.Title = "Interpreteur";
+        Console.Title = "Interpreter";
         Console.WriteLine("Code :");
         StringBuilder stringBuilder = new StringBuilder();
         string line;
