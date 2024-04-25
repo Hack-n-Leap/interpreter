@@ -96,10 +96,10 @@ namespace InterpreterLib
             int openBracketIndex = 0;
             int closeBracketIndex = 0;
             int expressionIndex = 0;
-
-            StringBuilder expressionBuilder = new StringBuilder(line);
             string newExpression;
 
+            StringBuilder expressionBuilder = new StringBuilder(line);
+            
             if (line.StartsWith('(') && line.EndsWith(')')) { expressionBuilder = new StringBuilder(line[1..(line.Length - 1)]); } // Delete the bracket at the start and the end of the calculus.
 
             while (expressionIndex < expressionBuilder.Length)
