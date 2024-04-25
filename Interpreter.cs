@@ -72,13 +72,15 @@ namespace InterpreterLib
 
         public void EvaluatePrint(string line)
         {
-            if (Variables.ContainsKey(line))
+            string lineType = EvaluateType(EvaluateType(line));
+
+            if (lineType == "Variable")
             {
                 Console.WriteLine(Variables[line].Value);
-            } else if (EvaluateType(line) == "Operation")
+            } else if (lineType == "Operation")
             {
                 Console.WriteLine(EvaluateOperations(line));
-            } else if (EvaluateType(line) == "String")
+            } else if (lineType == "String")
             {
                 Console.WriteLine(line[1..(line.Length - 1)]);
             } else
@@ -94,10 +96,10 @@ namespace InterpreterLib
             int openBracketIndex = 0;
             int closeBracketIndex = 0;
             int expressionIndex = 0;
-
-            StringBuilder expressionBuilder = new StringBuilder(line);
             string newExpression;
 
+            StringBuilder expressionBuilder = new StringBuilder(line);
+            
             if (line.StartsWith('(') && line.EndsWith(')')) { expressionBuilder = new StringBuilder(line[1..(line.Length - 1)]); } // Delete the bracket at the start and the end of the calculus.
 
             while (expressionIndex < expressionBuilder.Length)
@@ -120,13 +122,13 @@ namespace InterpreterLib
             {
                 return EvaluateAddition(newExpression);
 
-            } else if (newExpression.Contains('-')) // Case of an substraction
+            } else if (newExpression.Contains('-')) // Case of a substraction
             {
                 return EvaluateSubstraction(newExpression);    
-            } else if (newExpression.Contains('*')) // Case of an multiplication
+            } else if (newExpression.Contains('*')) // Case of a multiplication
             {
                 return EvaluateMultiplication(newExpression);
-            } else if (newExpression.Contains('/')) // Case of an division
+            } else if (newExpression.Contains('/')) // Case of a division
             {
                 return EvaluateDivision(newExpression);
             }
@@ -166,7 +168,7 @@ namespace InterpreterLib
             double sum;
 
 
-            if (EvaluateType(line.Split(" - ")[0]) == "Variable" && Variables[line.Split(" / ")[0]].Type != "String")
+            if (EvaluateType(line.Split(" - ")[0]) == "Variable" && Variables[line.Split(" - ")[0]].Type != "String")
             {
                 sum = double.Parse(Variables[line.Split(" - ")[0]].Value);
             }
