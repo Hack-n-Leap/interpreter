@@ -37,8 +37,8 @@ namespace InterpreterLib
         {
             StringBuilder functionCode = new StringBuilder(Code); // Use of String Builder because the program need to replace a string by another.
 
-            if (parameters.Length <= Var.Length) { throw new Exception("No enought parameters was given."); }
-            if (parameters.Length >= Var.Length) { throw new Exception("Too much parameters was given."); }
+            if (parameters.Length < Var.Length) { throw new Exception("No enought parameters was given."); }
+            if (parameters.Length > Var.Length) { throw new Exception("Too much parameters was given."); }
 
             for (int i = 0; i < parameters.Length; i++) // Replace all parameters of the function by the corresponding values.
             {
