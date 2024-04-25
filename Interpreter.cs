@@ -72,13 +72,15 @@ namespace InterpreterLib
 
         public void EvaluatePrint(string line)
         {
-            if (Variables.ContainsKey(line))
+            string lineType = EvaluateType(EvaluateType(line));
+
+            if (lineType == "Variable")
             {
                 Console.WriteLine(Variables[line].Value);
-            } else if (EvaluateType(line) == "Operation")
+            } else if (lineType == "Operation")
             {
                 Console.WriteLine(EvaluateOperations(line));
-            } else if (EvaluateType(line) == "String")
+            } else if (lineType == "String")
             {
                 Console.WriteLine(line[1..(line.Length - 1)]);
             } else
