@@ -120,13 +120,13 @@ namespace InterpreterLib
             {
                 return EvaluateAddition(newExpression);
 
-            } else if (newExpression.Contains('-')) // Case of an substraction
+            } else if (newExpression.Contains('-')) // Case of a substraction
             {
                 return EvaluateSubstraction(newExpression);    
-            } else if (newExpression.Contains('*')) // Case of an multiplication
+            } else if (newExpression.Contains('*')) // Case of a multiplication
             {
                 return EvaluateMultiplication(newExpression);
-            } else if (newExpression.Contains('/')) // Case of an division
+            } else if (newExpression.Contains('/')) // Case of a division
             {
                 return EvaluateDivision(newExpression);
             }
