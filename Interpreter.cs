@@ -168,7 +168,7 @@ namespace InterpreterLib
             double sum;
 
 
-            if (EvaluateType(line.Split(" - ")[0]) == "Variable" && Variables[line.Split(" / ")[0]].Type != "String")
+            if (EvaluateType(line.Split(" - ")[0]) == "Variable" && Variables[line.Split(" - ")[0]].Type != "String")
             {
                 sum = double.Parse(Variables[line.Split(" - ")[0]].Value);
             }
