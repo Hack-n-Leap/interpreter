@@ -20,6 +20,18 @@ namespace InterpreterLib
         }
     }
 
+    public class Function
+    {
+        public string Name { get; }
+        public string Code { get; }
+
+        public Function(string name, string code)
+        {
+            Name = name; Code = code;
+        }
+
+    }
+
     public class Interpreter
     {
         public Dictionary<string, Variable> Variables;
