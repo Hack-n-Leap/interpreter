@@ -107,7 +107,7 @@ namespace InterpreterLib
 
         public void EvaluatePrint(string line)
         {
-            string lineType = EvaluateType(EvaluateType(line));
+            string lineType = EvaluateType(line);
 
             if (lineType == "Variable")
             {
