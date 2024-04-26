@@ -73,22 +73,21 @@ namespace InterpreterLib
                 string line = lines[index];
                 string trimmedLine = line.Trim();
 
-                if (trimmedLine.StartsWith("var "))
+                if (trimmedLine.StartsWith("var ")) // Case of the registration / assignation of a value to a variable
                 {
                     EvaluateVariable(trimmedLine[4..]);
-                } else if (trimmedLine.StartsWith("print "))
+                } else if (trimmedLine.StartsWith("print ")) // Case of a print
                 {
                     EvaluatePrint(trimmedLine[6..]);
-                } else if (trimmedLine.StartsWith("func ")) {
+                } else if (trimmedLine.StartsWith("func ")) { // Case of the registration of a function
                     StringBuilder functionText = new StringBuilder(trimmedLine[5..]);
 
                     index++;
 
-                    while (index < lines.Length && lines[index].StartsWith("\t")) {
+                    while (index < lines.Length && lines[index].StartsWith("\t")) { // Get all lines until their are no tabulation.
                         functionText.Append(lines[index].Replace("\t", "\n"));
                         index++;
                     }
-
                     
                     EvaluateFunctionRegister(functionText.ToString());
                 } else
@@ -353,6 +352,9 @@ namespace InterpreterLib
             else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^') || value.Contains('%'))
             {
                 return "Operation";
+            } else if (Functions.ContainsKey(value.Split('(')[0]))
+            {
+                return "Function";
             }
             else
             {
