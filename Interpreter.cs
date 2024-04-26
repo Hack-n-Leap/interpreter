@@ -78,7 +78,17 @@ namespace InterpreterLib
                 {
                     EvaluatePrint(trimmedLine[6..]);
                 } else if (trimmedLine.StartsWith("func ")) {
-                    EvaluateFunction(trimmedLine[5..]);
+                    StringBuilder functionText = new StringBuilder(trimmedLine[5..]);
+
+                    index++;
+
+                    while (index < lines.Length && lines[index].StartsWith("\t")) {
+                        functionText.Append(lines[index].Replace("\t", "\n"));
+                        index++;
+                    }
+
+                    
+                    EvaluateFunction(functionText.ToString());
                 } else
                 {
                     throw new Exception($"Error. {trimmedLine} is not recognized as a correct expression. ");
@@ -112,7 +122,7 @@ namespace InterpreterLib
 
         public void EvaluateFunction(string lines)
         {
-            
+
         }
 
         public void EvaluatePrint(string line)
