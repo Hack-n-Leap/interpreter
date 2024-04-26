@@ -55,10 +55,12 @@ namespace InterpreterLib
     public class Interpreter
     {
         public Dictionary<string, Variable> Variables;
+        public Dictionary<string, Function> Functions;
 
         public Interpreter()
         {
             Variables = new Dictionary<string, Variable>();
+            Functions = new Dictionary<string, Function>();
         }
 
         public void EvaluateCode(string code)
@@ -88,7 +90,7 @@ namespace InterpreterLib
                     }
 
                     
-                    EvaluateFunction(functionText.ToString());
+                    EvaluateFunctionRegister(functionText.ToString());
                 } else
                 {
                     throw new Exception($"Error. {trimmedLine} is not recognized as a correct expression. ");
@@ -120,8 +122,18 @@ namespace InterpreterLib
             Variables[var[0]] = new Variable(var[0], var[1], varType);
         }
 
-        public void EvaluateFunction(string lines)
+        public void EvaluateFunctionRegister(string lines)
         {
+            string firstLine = lines.Split("\n")[0]; // Store the first line to use it to get the function name and args
+            string functionTitle = firstLine.Split('(')[0]; // Get the title of the function.
+
+            int openBracketIndex = firstLine.IndexOf("(");
+            int closeBracketIndex = firstLine.IndexOf(")");
+
+            if (openBracketIndex ==  -1 || closeBracketIndex == -1 || !(firstLine.EndsWith(':')) || functionTitle.Length == 0) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
+
+            Function function = new Function(functionTitle, lines[(firstLine.Length + 1)..], firstLine[(openBracketIndex + 1)..closeBracketIndex].Split(", ")); // Create a new Function objet that store all the informations about the new function.
+            Functions[function.Name] = function; // Register the created function into the program function dictionnary.
 
         }
 
