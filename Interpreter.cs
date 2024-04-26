@@ -64,24 +64,29 @@ namespace InterpreterLib
         public void EvaluateCode(string code)
         {
             string[] lines = code.Split(new[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+            int index = 0;
 
-            foreach (string line in lines)
+            while (index < lines.Length)
             {
+                string line = lines[index];
                 string trimmedLine = line.Trim();
 
                 if (trimmedLine.StartsWith("var "))
                 {
                     EvaluateVariable(trimmedLine[4..]);
-                }
-                else if (trimmedLine.StartsWith("print "))
+                } else if (trimmedLine.StartsWith("print "))
                 {
                     EvaluatePrint(trimmedLine[6..]);
-                }
-                else
+                } else if (trimmedLine.StartsWith("func ")) {
+                    EvaluateFunction(trimmedLine[5..]);
+                } else
                 {
                     throw new Exception($"Error. {trimmedLine} is not recognized as a correct expression. ");
                 }
+
+                index++;
             }
+
         }
 
         public void EvaluateVariable(string line)
@@ -103,6 +108,11 @@ namespace InterpreterLib
             }
 
             Variables[var[0]] = new Variable(var[0], var[1], varType);
+        }
+
+        public void EvaluateFunction(string lines)
+        {
+            
         }
 
         public void EvaluatePrint(string line)
