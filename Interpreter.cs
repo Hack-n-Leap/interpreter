@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace InterpreterLib
@@ -10,7 +11,7 @@ namespace InterpreterLib
         public string Type { get; }
 
         public Variable(string name, string value, string type)
-        { 
+        {
             Name = name; Value = value; Type = type;
         }
 
@@ -20,39 +21,92 @@ namespace InterpreterLib
         }
     }
 
+
+    public class Function
+    {
+        public string Name { get; }
+        public string Code { get; }
+        public string[] Var { get; }
+
+        public Function(string name, string code, string[] var)
+        {
+            Name = name; Code = code; Var = var;
+        }
+
+        public void Execute(string[] parameters)
+        {
+            StringBuilder functionCode = new StringBuilder(Code); // Use of String Builder because the program need to replace a string by another.
+
+            if (parameters.Length < Var.Length) { throw new Exception("No enought parameters was given."); }
+            if (parameters.Length > Var.Length) { throw new Exception("Too much parameters was given."); }
+
+            Interpreter functionInterpreter = new Interpreter(); // Create a new interpreter to execute the function code.
+
+            for (int i = 0; i < parameters.Length; i++) // Create local variables with the parameters given in parameters.
+            {
+                functionInterpreter.Variables[Var[i]] = new Variable(Var[i], parameters[i], functionInterpreter.EvaluateType(parameters[i])); 
+            }
+
+            functionInterpreter.EvaluateCode(functionCode.ToString()); 
+        }
+
+    }
+
+
     public class Interpreter
     {
         public Dictionary<string, Variable> Variables;
+        public Dictionary<string, Function> Functions;
 
-        public Interpreter() 
+        public Interpreter()
         {
             Variables = new Dictionary<string, Variable>();
+            Functions = new Dictionary<string, Function>();
         }
 
         public void EvaluateCode(string code)
         {
-            string[] lines = code.Split(new[] {"\n", "\r"}, StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = code.Split(new[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+            int index = 0;
 
-            foreach (string line in lines)
+            while (index < lines.Length)
             {
+                string line = lines[index];
                 string trimmedLine = line.Trim();
 
-                if (trimmedLine.StartsWith("var "))
+                if (trimmedLine.StartsWith("var ")) // Case of the registration / assignation of a value to a variable
                 {
                     EvaluateVariable(trimmedLine[4..]);
-                } else if (trimmedLine.StartsWith("print "))
+                } else if (trimmedLine.StartsWith("print ")) // Case of a print
                 {
                     EvaluatePrint(trimmedLine[6..]);
+                } else if (trimmedLine.StartsWith("func ")) { // Case of the registration of a function
+                    StringBuilder functionText = new StringBuilder(trimmedLine[5..]);
+
+                    index++;
+
+                    while (index < lines.Length && lines[index].StartsWith("\t") && !lines[index].EndsWith('}')) { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
+                        functionText.Append(lines[index].Replace("\t", "\n"));
+                        index++;
+                    }
+                    
+                    EvaluateFunctionRegister(functionText.ToString());
+                } else if (EvaluateType(trimmedLine) == "Function")
+                {
+                    EvaluateFunctionCall(trimmedLine);
                 } else
                 {
                     throw new Exception($"Error. {trimmedLine} is not recognized as a correct expression. ");
                 }
+
+                index++;
             }
+
         }
 
         public void EvaluateVariable(string line)
         {
-            if (!line.Contains(" = ")) { throw new Exception("Unable to create a variable without value assignation.");}
+            if (!line.Contains(" = ")) { throw new Exception("Unable to create a variable without value assignation."); }
 
             string[] var = line.Split(" = ");
 
@@ -61,7 +115,8 @@ namespace InterpreterLib
             if (varType == "String")
             {
                 var[1] = var[1][1..(var[1].Length - 1)];
-            } else if (varType == "Variable")
+            }
+            else if (varType == "Variable")
             {
                 varType = Variables[var[1]].Type;
                 var[1] = Variables[var[1]].Value;
@@ -70,28 +125,57 @@ namespace InterpreterLib
             Variables[var[0]] = new Variable(var[0], var[1], varType);
         }
 
+        public void EvaluateFunctionRegister(string lines)
+        {
+            string firstLine = lines.Split("\n")[0]; // Store the first line to use it to get the function name and args
+            string functionTitle = firstLine.Split('(')[0]; // Get the title of the function.
+
+            int openBracketIndex = firstLine.IndexOf("(");
+            int closeBracketIndex = firstLine.IndexOf(")");
+
+            if (openBracketIndex ==  -1 || closeBracketIndex == -1 || !(firstLine.EndsWith('{')) || functionTitle.Length == 0) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
+
+            Function function = new Function(functionTitle, lines[(firstLine.Length + 1)..], firstLine[(openBracketIndex + 1)..closeBracketIndex].Split(", ")); // Create a new Function objet that store all the informations about the new function.
+            Functions[function.Name] = function; // Register the created function into the program function dictionnary.
+
+        }
+
+        public void EvaluateFunctionCall(string line) 
+        { 
+            string functionName = line.Split('(')[0]; // Get the title of the function
+
+            int openBracketIndex = line.IndexOf('(');
+            int closeBracketIndex = line.IndexOf(')');
+
+            Functions[functionName].Execute(line[(openBracketIndex + 1)..closeBracketIndex].Split(", ")); // Execute the function with the parameters gives in the function call.
+
+        }
+
         public void EvaluatePrint(string line)
         {
-            string lineType = EvaluateType(EvaluateType(line));
+            string lineType = EvaluateType(line);
 
             if (lineType == "Variable")
             {
                 Console.WriteLine(Variables[line].Value);
-            } else if (lineType == "Operation")
+            }
+            else if (lineType == "Operation")
             {
                 Console.WriteLine(EvaluateOperations(line));
-            } else if (lineType == "String")
+            }
+            else if (lineType == "String")
             {
                 Console.WriteLine(line[1..(line.Length - 1)]);
-            } else
+            }
+            else
             {
                 Console.WriteLine(line);
             }
         }
 
-        public double EvaluateOperations (string line)
-            // This function manages the system of operations and redirects each operation to the corresponding operations function.
-            // It take a calculation in string type as a parameter and return the result of it as a double.
+        public double EvaluateOperations(string line)
+        // This function manages the system of operations and redirects each operation to the corresponding operations function.
+        // It take a calculation in string type as a parameter and return the result of it as a double.
         {
             int openBracketIndex = 0;
             int closeBracketIndex = 0;
@@ -99,7 +183,7 @@ namespace InterpreterLib
             string newExpression;
 
             StringBuilder expressionBuilder = new StringBuilder(line);
-            
+
             if (line.StartsWith('(') && line.EndsWith(')')) { expressionBuilder = new StringBuilder(line[1..(line.Length - 1)]); } // Delete the bracket at the start and the end of the calculus.
 
             while (expressionIndex < expressionBuilder.Length)
@@ -122,20 +206,24 @@ namespace InterpreterLib
             {
                 return EvaluateAddition(newExpression);
 
-            } else if (newExpression.Contains('-')) // Case of a substraction
+            }
+            else if (newExpression.Contains('-')) // Case of a substraction
             {
-                return EvaluateSubstraction(newExpression);    
-            } else if (newExpression.Contains('*')) // Case of a multiplication
+                return EvaluateSubstraction(newExpression);
+            }
+            else if (newExpression.Contains('*')) // Case of a multiplication
             {
                 return EvaluateMultiplication(newExpression);
-            } else if (newExpression.Contains('/')) // Case of a division
+            }
+            else if (newExpression.Contains('/')) // Case of a division
             {
                 return EvaluateDivision(newExpression);
             }
             else if (double.TryParse(newExpression, out double _))
             {
                 return double.Parse(newExpression);
-            } else
+            }
+            else
             {
                 throw new Exception($"Unexcepted operation : ${newExpression}");
             }
@@ -146,14 +234,17 @@ namespace InterpreterLib
             string[] parts = line.Split(" + ");
             double sum = 0;
 
-            foreach (string part in parts) { 
+            foreach (string part in parts)
+            {
                 if (EvaluateType(part) == "Variable" && EvaluateType(Variables[part].Value) != "String")
                 {
                     sum += double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
-                } else if (EvaluateType(part) == "Integer" || EvaluateType(part) == "Float" || EvaluateType(part) == "Operation")
+                }
+                else if (EvaluateType(part) == "Integer" || EvaluateType(part) == "Float" || EvaluateType(part) == "Operation")
                 {
                     sum += double.Parse(part, CultureInfo.InvariantCulture);
-                } else
+                }
+                else
                 {
                     throw new Exception($"Unable to add {EvaluateType(part)} to double !");
                 }
@@ -230,7 +321,8 @@ namespace InterpreterLib
             if (EvaluateType(line.Split(" / ")[0]) == "Variable" && Variables[line.Split(" / ")[0]].Type != "String")
             {
                 total = double.Parse(Variables[line.Split(" / ")[0]].Value);
-            } else
+            }
+            else
             {
                 total = double.Parse(line.Split(" / ")[0]);
             }
@@ -267,13 +359,19 @@ namespace InterpreterLib
             else if (double.TryParse(value, CultureInfo.InvariantCulture, out _))
             {
                 return "Float";
-            } else if (Variables.ContainsKey(value))
+            }
+            else if (Variables.ContainsKey(value))
             {
                 return "Variable";
-            } else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^') || value.Contains('%'))
+            }
+            else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^') || value.Contains('%'))
             {
                 return "Operation";
-            } else
+            } else if (Functions.ContainsKey(value.Split('(')[0]))
+            {
+                return "Function";
+            }
+            else
             {
                 throw new Exception($"Error. Unable to get the type of {value}");
             }
