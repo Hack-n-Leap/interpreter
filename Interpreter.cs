@@ -84,7 +84,7 @@ namespace InterpreterLib
 
                     index++;
 
-                    while (index < lines.Length && lines[index].StartsWith("\t")) { // Get all lines until their are no tabulation.
+                    while (index < lines.Length && lines[index].StartsWith("\t") && !lines[index].EndsWith('}')) { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
                         functionText.Append(lines[index].Replace("\t", "\n"));
                         index++;
                     }
@@ -132,7 +132,7 @@ namespace InterpreterLib
             int openBracketIndex = firstLine.IndexOf("(");
             int closeBracketIndex = firstLine.IndexOf(")");
 
-            if (openBracketIndex ==  -1 || closeBracketIndex == -1 || !(firstLine.EndsWith(':')) || functionTitle.Length == 0) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
+            if (openBracketIndex ==  -1 || closeBracketIndex == -1 || !(firstLine.EndsWith('{')) || functionTitle.Length == 0) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
 
             Function function = new Function(functionTitle, lines[(firstLine.Length + 1)..], firstLine[(openBracketIndex + 1)..closeBracketIndex].Split(", ")); // Create a new Function objet that store all the informations about the new function.
             Functions[function.Name] = function; // Register the created function into the program function dictionnary.
