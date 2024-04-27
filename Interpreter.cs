@@ -40,12 +40,13 @@ namespace InterpreterLib
             if (parameters.Length < Var.Length) { throw new Exception("No enought parameters was given."); }
             if (parameters.Length > Var.Length) { throw new Exception("Too much parameters was given."); }
 
-            for (int i = 0; i < parameters.Length; i++) // Replace all parameters of the function by the corresponding values.
+            Interpreter functionInterpreter = new Interpreter(); // Create a new interpreter to execute the function code.
+
+            for (int i = 0; i < parameters.Length; i++) // Create local variables with the parameters given in parameters.
             {
-                functionCode.Replace(Var[i], parameters[i]);
+                functionInterpreter.Variables[Var[i]] = new Variable(Var[i], parameters[i], functionInterpreter.EvaluateType(parameters[i])); 
             }
 
-            Interpreter functionInterpreter = new Interpreter(); // Create a new interpreter to execute the function code.
             functionInterpreter.EvaluateCode(functionCode.ToString()); 
         }
 
