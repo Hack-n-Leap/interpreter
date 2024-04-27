@@ -90,6 +90,9 @@ namespace InterpreterLib
                     }
                     
                     EvaluateFunctionRegister(functionText.ToString());
+                } else if (EvaluateType(trimmedLine) == "Function")
+                {
+                    EvaluateFunctionCall(trimmedLine);
                 } else
                 {
                     throw new Exception($"Error. {trimmedLine} is not recognized as a correct expression. ");
@@ -133,6 +136,17 @@ namespace InterpreterLib
 
             Function function = new Function(functionTitle, lines[(firstLine.Length + 1)..], firstLine[(openBracketIndex + 1)..closeBracketIndex].Split(", ")); // Create a new Function objet that store all the informations about the new function.
             Functions[function.Name] = function; // Register the created function into the program function dictionnary.
+
+        }
+
+        public void EvaluateFunctionCall(string line) 
+        { 
+            string functionName = line.Split('(')[0]; // Get the title of the function
+
+            int openBracketIndex = line.IndexOf('(');
+            int closeBracketIndex = line.IndexOf(')');
+
+            Functions[functionName].Execute(line[(openBracketIndex + 1)..closeBracketIndex].Split(", ")); // Execute the function with the parameters gives in the function call.
 
         }
 
