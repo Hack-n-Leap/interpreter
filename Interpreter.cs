@@ -39,16 +39,17 @@ namespace InterpreterLib
 
             if (parameters.Length < Var.Length) { throw new Exception("No enought parameters was given."); }
             if (parameters.Length > Var.Length) { throw new Exception("Too much parameters was given."); }
+            if (Var.Length == 1 && Var[0] == "") { parameters = []; } // Case of a function without parameters
 
             Interpreter functionInterpreter = new Interpreter(); // Create a new interpreter to execute the function code.
 
             for (int i = 0; i < parameters.Length; i++) // Create local variables with the parameters given in parameters.
             {
-                if (interpreter.EvaluateType(parameters[i]) == "Variable") { parameters[i] = interpreter.Variables[Var[i]].Value; }
+                if (interpreter.EvaluateType(parameters[i]) == "Variable") { parameters[i] = interpreter.Variables[Var[i]].Value; } // Replace variable name with value
                 functionInterpreter.Variables[Var[i]] = new Variable(Var[i], parameters[i], functionInterpreter.EvaluateType(parameters[i])); 
             }
 
-            foreach (string functionName in interpreter.Functions.Keys)
+            foreach (string functionName in interpreter.Functions.Keys) // Add all functions created in the main interpreter to the function interpreter
             {
                 functionInterpreter.Functions[functionName] = interpreter.Functions[functionName];
             }
