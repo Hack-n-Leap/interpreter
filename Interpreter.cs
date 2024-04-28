@@ -353,6 +353,44 @@ namespace InterpreterLib
             return total;
         }
 
+        public double EvaluatePower(string line)
+        {
+            string[] parts = line.Split(" ^ ")[1..];
+            double pow;
+
+
+            if (EvaluateType(line.Split(" ^ ")[0]) == "Variable" && Variables[line.Split(" ^ ")[0]].Type != "String")
+            {
+                pow = double.Parse(Variables[line.Split(" ^ ")[0]].Value);
+            }
+            else if (EvaluateType(line.Split(" ^ ")[0]) != "String")
+            {
+                pow = double.Parse(line.Split(" ^ ")[0]);
+                
+            } else
+            {
+                throw new Exception("Unable to calculate a string power.");
+            }
+
+            foreach (string part in parts)
+            {
+                if (EvaluateType(part) == "Variable" && EvaluateType(Variables[part].Value) != "String")
+                {
+                    pow = Math.Pow(pow, double.Parse(Variables[part].Value, CultureInfo.InvariantCulture));
+                }
+                else if (EvaluateType(part) == "Integer" || EvaluateType(part) == "Float" || EvaluateType(part) == "Operation")
+                {
+                    pow = Math.Pow(pow, double.Parse(part, CultureInfo.InvariantCulture));
+                }
+                else
+                {
+                    throw new Exception($"Unable to power {EvaluateType(part)} to double !");
+                }
+            }
+
+            return pow;
+        }
+
         public string EvaluateType(string value)
         {
             if ((value.StartsWith("'") && value.EndsWith("'")) || (value.StartsWith('"') && value.EndsWith('"')))
