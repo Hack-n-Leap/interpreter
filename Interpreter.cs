@@ -226,6 +226,10 @@ namespace InterpreterLib
             {
                 return EvaluateDivision(newExpression);
             }
+            else if (newExpression.Contains('^'))
+            {
+                return EvaluatePower(newExpression);
+            }
             else if (double.TryParse(newExpression, out double _))
             {
                 return double.Parse(newExpression);
