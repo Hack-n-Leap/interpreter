@@ -4,6 +4,16 @@ using System.Text;
 
 namespace InterpreterLib
 {
+    public class Type
+    {
+        public static readonly int STRING = 1;
+        public static readonly int INTEGER = 2;
+        public static readonly int FLOAT = 3;
+        public static readonly int OPERATION = 4;
+        public static readonly int VARIABLE = 5;
+        public static readonly int FUNCTION = 6;
+
+    }
     public class Variable
     {
         public string Name { get; }
