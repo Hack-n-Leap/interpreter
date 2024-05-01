@@ -45,7 +45,7 @@ namespace InterpreterLib
 
             for (int i = 0; i < parameters.Length; i++) // Create local variables with the parameters given in parameters.
             {
-                if (interpreter.EvaluateType(parameters[i]) == "Variable") { Var[i] = interpreter.Variables[parameters[i]].Value; } // Replace variable name with value
+                if (interpreter.EvaluateType(parameters[i]) == "4") { Var[i] = interpreter.Variables[parameters[i]].Value; } // Replace variable name with value
                 functionInterpreter.Variables[Var[i]] = new Variable(Var[i], parameters[i], functionInterpreter.EvaluateType(parameters[i])); 
             }
 
@@ -98,7 +98,7 @@ namespace InterpreterLib
                     }
                     
                     EvaluateFunctionRegister(functionText.ToString());
-                } else if (EvaluateType(trimmedLine) == "Function")
+                } else if (EvaluateType(trimmedLine) == "6")
                 {
                     EvaluateFunctionCall(trimmedLine);
                 } else
@@ -119,11 +119,11 @@ namespace InterpreterLib
 
             string varType = EvaluateType(var[1]);
 
-            if (varType == "String")
+            if (varType == "1")
             {
                 var[1] = var[1][1..(var[1].Length - 1)];
             }
-            else if (varType == "Variable")
+            else if (varType == "4")
             {
                 varType = Variables[var[1]].Type;
                 var[1] = Variables[var[1]].Value;
@@ -162,15 +162,15 @@ namespace InterpreterLib
         {
             string lineType = EvaluateType(line);
 
-            if (lineType == "Variable")
+            if (lineType == "4")
             {
                 Console.WriteLine(Variables[line].Value);
             }
-            else if (lineType == "Operation")
+            else if (lineType == "5")
             {
                 Console.WriteLine(EvaluateOperations(line));
             }
-            else if (lineType == "String")
+            else if (lineType == "1")
             {
                 Console.WriteLine(line[1..(line.Length - 1)]);
             }
@@ -247,11 +247,11 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == "Variable" && EvaluateType(Variables[part].Value) != "String")
+                if (EvaluateType(part) == "4" && EvaluateType(Variables[part].Value) != "1")
                 {
                     sum += double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (EvaluateType(part) == "Integer" || EvaluateType(part) == "Float" || EvaluateType(part) == "Operation")
+                else if (EvaluateType(part) == "2" || EvaluateType(part) == "3" || EvaluateType(part) == "5")
                 {
                     sum += double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -270,7 +270,7 @@ namespace InterpreterLib
             double sum;
 
 
-            if (EvaluateType(line.Split(" - ")[0]) == "Variable" && Variables[line.Split(" - ")[0]].Type != "String")
+            if (EvaluateType(line.Split(" - ")[0]) == "4" && Variables[line.Split(" - ")[0]].Type != "1")
             {
                 sum = double.Parse(Variables[line.Split(" - ")[0]].Value);
             }
@@ -281,11 +281,11 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == "Variable" && EvaluateType(Variables[part].Value) != "String")
+                if (EvaluateType(part) == "4" && EvaluateType(Variables[part].Value) != "1")
                 {
                     sum -= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (EvaluateType(part) == "Integer" || EvaluateType(part) == "Float" || EvaluateType(part) == "Operation")
+                else if (EvaluateType(part) == "2" || EvaluateType(part) == "3" || EvaluateType(part) == "5")
                 {
                     sum -= double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -305,11 +305,11 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == "Variable" && EvaluateType(Variables[part].Value) != "String")
+                if (EvaluateType(part) == "4" && EvaluateType(Variables[part].Value) != "1")
                 {
                     total *= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (EvaluateType(part) == "Integer" || EvaluateType(part) == "Float" || EvaluateType(part) == "Operation")
+                else if (EvaluateType(part) == "2" || EvaluateType(part) == "3" || EvaluateType(part) == "5")
                 {
                     total *= double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -329,7 +329,7 @@ namespace InterpreterLib
 
             if (parts.Contains("0")) { throw new Exception("Error. Unable to divide by zero."); }
 
-            if (EvaluateType(line.Split(" / ")[0]) == "Variable" && Variables[line.Split(" / ")[0]].Type != "String")
+            if (EvaluateType(line.Split(" / ")[0]) == "4" && Variables[line.Split(" / ")[0]].Type != "1")
             {
                 total = double.Parse(Variables[line.Split(" / ")[0]].Value);
             }
@@ -340,11 +340,11 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == "Variable" && EvaluateType(Variables[part].Value) != "String")
+                if (EvaluateType(part) == "4" && EvaluateType(Variables[part].Value) != "1")
                 {
                     total /= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (EvaluateType(part) == "Integer" || EvaluateType(part) == "Float" || EvaluateType(part) == "Operation")
+                else if (EvaluateType(part) == "2" || EvaluateType(part) == "3" || EvaluateType(part) == "5")
                 {
                     total /= double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -363,11 +363,11 @@ namespace InterpreterLib
             double pow;
 
 
-            if (EvaluateType(line.Split(" ^ ")[0]) == "Variable" && Variables[line.Split(" ^ ")[0]].Type != "String")
+            if (EvaluateType(line.Split(" ^ ")[0]) == "4" && Variables[line.Split(" ^ ")[0]].Type != "1")
             {
                 pow = double.Parse(Variables[line.Split(" ^ ")[0]].Value);
             }
-            else if (EvaluateType(line.Split(" ^ ")[0]) != "String")
+            else if (EvaluateType(line.Split(" ^ ")[0]) != "1")
             {
                 pow = double.Parse(line.Split(" ^ ")[0]);
                 
@@ -378,11 +378,11 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == "Variable" && EvaluateType(Variables[part].Value) != "String")
+                if (EvaluateType(part) == "4" && EvaluateType(Variables[part].Value) != "1")
                 {
                     pow = Math.Pow(pow, double.Parse(Variables[part].Value, CultureInfo.InvariantCulture));
                 }
-                else if (EvaluateType(part) == "Integer" || EvaluateType(part) == "Float" || EvaluateType(part) == "Operation")
+                else if (EvaluateType(part) == "2" || EvaluateType(part) == "3" || EvaluateType(part) == "5")
                 {
                     pow = Math.Pow(pow, double.Parse(part, CultureInfo.InvariantCulture));
                 }
@@ -399,26 +399,27 @@ namespace InterpreterLib
         {
             if ((value.StartsWith("'") && value.EndsWith("'")) || (value.StartsWith('"') && value.EndsWith('"')))
             {
-                return "String";
+                return "1"; // String
             }
             else if (int.TryParse(value, out _))
             {
-                return "Integer";
+                return "2"; // Integer
             }
             else if (double.TryParse(value, CultureInfo.InvariantCulture, out _))
             {
-                return "Float";
+                return "3"; // Float
             }
             else if (Variables.ContainsKey(value))
             {
-                return "Variable";
+                return "4"; // Variable
             }
             else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^') || value.Contains('%'))
             {
-                return "Operation";
-            } else if (Functions.ContainsKey(value.Split('(')[0]))
+                return "5"; // Operation
+            }
+            else if (Functions.ContainsKey(value.Split('(')[0]))
             {
-                return "Function";
+                return "6"; // Function
             }
             else
             {
