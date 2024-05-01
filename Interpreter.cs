@@ -257,7 +257,7 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == Type.VARIABLE && EvaluateType(Variables[part].Value) != Type.STRING)
+                if (EvaluateType(part) == Type.VARIABLE && Variables[part].Type != Type.STRING)
                 {
                     sum += double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
@@ -291,7 +291,7 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == Type.VARIABLE && EvaluateType(Variables[part].Value) != Type.STRING)
+                if (EvaluateType(part) == Type.VARIABLE && Variables[part].Type != Type.STRING)
                 {
                     sum -= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
@@ -315,7 +315,7 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == Type.VARIABLE && EvaluateType(Variables[part].Value) != Type.STRING)
+                if (EvaluateType(part) == Type.VARIABLE && Variables[part].Type != Type.STRING)
                 {
                     total *= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
@@ -350,7 +350,7 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == Type.VARIABLE && EvaluateType(Variables[part].Value) != Type.STRING)
+                if (EvaluateType(part) == Type.VARIABLE && Variables[part].Type != Type.STRING)
                 {
                     total /= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
@@ -388,7 +388,7 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == Type.VARIABLE && EvaluateType(Variables[part].Value) != Type.STRING)
+                if (EvaluateType(part) == Type.VARIABLE && Variables[part].Type != Type.STRING)
                 {
                     pow = Math.Pow(pow, double.Parse(Variables[part].Value, CultureInfo.InvariantCulture));
                 }
