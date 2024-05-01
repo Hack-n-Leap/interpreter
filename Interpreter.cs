@@ -14,6 +14,7 @@ namespace InterpreterLib
         public static readonly int FUNCTION = 6;
 
     }
+
     public class Variable
     {
         public string Name { get; }
@@ -55,8 +56,9 @@ namespace InterpreterLib
 
             for (int i = 0; i < parameters.Length; i++) // Create local variables with the parameters given in parameters.
             {
-                if (interpreter.EvaluateType(parameters[i]) == Type.VARIABLE) { parameters[i] = interpreter.Variables[parameters[i]].Value; } // Replace variable name with value
-                functionInterpreter.Variables[Var[i]] = new Variable(Var[i], parameters[i], interpreter.EvaluateType(parameters[i])); 
+                int parameterType = interpreter.EvaluateType(parameters[i]); 
+                if (parameterType == Type.VARIABLE) { parameters[i] = interpreter.Variables[parameters[i]].Value; parameterType = interpreter.Variables[parameters[i]].Type; } // Replace variable name with value and type with the value type
+                functionInterpreter.Variables[Var[i]] = new Variable(Var[i], parameters[i], parameterType); 
             }
 
             foreach (string functionName in interpreter.Functions.Keys) // Add all functions created in the main interpreter to the function interpreter
@@ -257,17 +259,18 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == Type.VARIABLE && Variables[part].Type != Type.STRING)
+                int partType = EvaluateType(part);
+                if (partType == Type.VARIABLE && Variables[part].Type != Type.STRING)
                 {
                     sum += double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (EvaluateType(part) == Type.INTEGER || EvaluateType(part) == Type.FLOAT || EvaluateType(part) == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
                 {
                     sum += double.Parse(part, CultureInfo.InvariantCulture);
                 }
                 else
                 {
-                    throw new Exception($"Unable to add {EvaluateType(part)} to double !");
+                    throw new Exception($"Unable to add {partType} to double !");
                 }
             }
 
@@ -291,17 +294,18 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == Type.VARIABLE && Variables[part].Type != Type.STRING)
+                int partType = EvaluateType(part);
+                if (partType == Type.VARIABLE && Variables[part].Type != Type.STRING)
                 {
                     sum -= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (EvaluateType(part) == Type.INTEGER || EvaluateType(part) == Type.FLOAT || EvaluateType(part) == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
                 {
                     sum -= double.Parse(part, CultureInfo.InvariantCulture);
                 }
                 else
                 {
-                    throw new Exception($"Unable to substract {EvaluateType(part)} to double !");
+                    throw new Exception($"Unable to substract {partType} to double !");
                 }
             }
 
@@ -315,17 +319,19 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == Type.VARIABLE && Variables[part].Type != Type.STRING)
+                int partType = EvaluateType(part);
+
+                if (partType == Type.VARIABLE && Variables[part].Type != Type.STRING)
                 {
                     total *= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (EvaluateType(part) == Type.INTEGER || EvaluateType(part) == Type.FLOAT || EvaluateType(part) == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
                 {
                     total *= double.Parse(part, CultureInfo.InvariantCulture);
                 }
                 else
                 {
-                    throw new Exception($"Unable to multiply {EvaluateType(part)} to double !");
+                    throw new Exception($"Unable to multiply {partType} to double !");
                 }
             }
 
@@ -350,17 +356,18 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == Type.VARIABLE && Variables[part].Type != Type.STRING)
+                int partType = EvaluateType(part);
+                if (partType == Type.VARIABLE && Variables[part].Type != Type.STRING)
                 {
                     total /= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (EvaluateType(part) == Type.INTEGER || EvaluateType(part) == Type.FLOAT || EvaluateType(part) == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
                 {
                     total /= double.Parse(part, CultureInfo.InvariantCulture);
                 }
                 else
                 {
-                    throw new Exception($"Unable to divide {EvaluateType(part)} to double !");
+                    throw new Exception($"Unable to divide {partType} to double !");
                 }
             }
 
@@ -388,17 +395,19 @@ namespace InterpreterLib
 
             foreach (string part in parts)
             {
-                if (EvaluateType(part) == Type.VARIABLE && Variables[part].Type != Type.STRING)
+                int partType = EvaluateType(part);
+
+                if (partType == Type.VARIABLE && Variables[part].Type != Type.STRING)
                 {
                     pow = Math.Pow(pow, double.Parse(Variables[part].Value, CultureInfo.InvariantCulture));
                 }
-                else if (EvaluateType(part) == Type.INTEGER || EvaluateType(part) == Type.FLOAT || EvaluateType(part) == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
                 {
                     pow = Math.Pow(pow, double.Parse(part, CultureInfo.InvariantCulture));
                 }
                 else
                 {
-                    throw new Exception($"Unable to power {EvaluateType(part)} to double !");
+                    throw new Exception($"Unable to power {partType} to double !");
                 }
             }
 
