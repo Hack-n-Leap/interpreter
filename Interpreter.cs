@@ -45,7 +45,7 @@ namespace InterpreterLib
 
             for (int i = 0; i < parameters.Length; i++) // Create local variables with the parameters given in parameters.
             {
-                if (interpreter.EvaluateType(parameters[i]) == "Variable") { parameters[i] = interpreter.Variables[Var[i]].Value; } // Replace variable name with value
+                if (interpreter.EvaluateType(parameters[i]) == "Variable") { Var[i] = interpreter.Variables[parameters[i]].Value; } // Replace variable name with value
                 functionInterpreter.Variables[Var[i]] = new Variable(Var[i], parameters[i], functionInterpreter.EvaluateType(parameters[i])); 
             }
 
@@ -226,7 +226,7 @@ namespace InterpreterLib
             {
                 return EvaluateDivision(newExpression);
             }
-            else if (newExpression.Contains('^'))
+            else if (newExpression.Contains('^')) // Case of a power
             {
                 return EvaluatePower(newExpression);
             }
