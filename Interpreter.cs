@@ -71,6 +71,8 @@ namespace InterpreterLib
 
     }
 
+    
+
 
     public class Interpreter
     {
@@ -96,24 +98,81 @@ namespace InterpreterLib
                 if (trimmedLine.StartsWith("var ")) // Case of the registration / assignation of a value to a variable
                 {
                     EvaluateVariable(trimmedLine[4..]);
-                } else if (trimmedLine.StartsWith("print ")) // Case of a print
+                }
+                else if (trimmedLine.StartsWith("print ")) // Case of a print
                 {
                     EvaluatePrint(trimmedLine[6..]);
-                } else if (trimmedLine.StartsWith("func ")) { // Case of the registration of a function
+                }
+                else if (trimmedLine.StartsWith("func "))
+                { // Case of the registration of a function
                     StringBuilder functionText = new StringBuilder(trimmedLine[5..]);
 
                     index++;
 
-                    while (index < lines.Length && lines[index].StartsWith("\t") && !lines[index].EndsWith('}')) { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
+                    while (index < lines.Length && lines[index].StartsWith("\t") && !lines[index].EndsWith('}'))
+                    { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
                         functionText.Append(lines[index].Replace("\t", "\n"));
                         index++;
                     }
-                    
+
                     EvaluateFunctionRegister(functionText.ToString());
-                } else if (EvaluateType(trimmedLine) == Type.FUNCTION)
+                }
+                /////////////////////////////////    for var from x to y {}
+                else if (trimmedLine.StartsWith("for "))
+                { // Case of the registration of a loop
+                    StringBuilder loopText = new StringBuilder(trimmedLine[4..]);
+
+
+
+                    //if (!(firstLine.EndsWith('{'))) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
+                    string loopVarName = trimmedLine.Split(' ')[0]; // Get the title of the loopVar
+                    string loopFromName = trimmedLine.Split(' ')[2]; // Get the title of the loopFrom
+                    string loopToName = trimmedLine.Split(' ')[4]; // Get the title of the loopTo
+
+                    int loopFromType = EvaluateType(loopFromName);
+                    int loopToType = EvaluateType(loopToName);
+
+                    if (loopFromType == Type.VARIABLE)
+                    {
+                        loopFromName = Variables[loopFromName].Value;
+                        loopFromType = Variables[loopFromName].Type;
+                    }
+                    if (loopToType == Type.VARIABLE)
+                    {
+                        loopToName = Variables[loopToName].Value;
+                        loopToType = Variables[loopToName].Type;
+                    }
+                    if (loopFromType != Type.INTEGER || loopToType != Type.INTEGER)
+                    {
+                        throw new Exception($"Error. {trimmedLine} is not recognized as a correct expression. ");
+                    }
+
+                    Variables[loopVarName] = new Variable(loopVarName, loopFromName, Type.INTEGER);
+
+                    while (index < lines.Length && lines[index].StartsWith("\t") && !lines[index].EndsWith('}'))
+                    { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
+                        loopText.Append(lines[index].Replace("\t", "\n"));
+                        index++;
+                    }
+
+                    int from = int.Parse(loopFromName);
+                    int to = int.Parse(loopToName);
+
+
+                    for (int i = from;  i < to;  i++)
+                    {
+                        Variables[loopVarName] = new Variable(loopVarName, Variables[loopVarName].Value, Type.INTEGER);
+
+                        this.EvaluateCode(loopText.ToString());
+
+                    }
+
+                }//////////////////
+                else if (EvaluateType(trimmedLine) == Type.FUNCTION)
                 {
                     EvaluateFunctionCall(trimmedLine);
-                } else
+                }
+                else
                 {
                     throw new Exception($"Error. {trimmedLine} is not recognized as a correct expression. ");
                 }
