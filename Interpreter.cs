@@ -57,7 +57,7 @@ namespace InterpreterLib
             for (int i = 0; i < parameters.Length; i++) // Create local variables with the parameters given in parameters.
             {
                 int parameterType = interpreter.EvaluateType(parameters[i]); 
-                if (parameterType == Type.VARIABLE) { parameters[i] = interpreter.Variables[parameters[i]].Value; parameterType = interpreter.Variables[parameters[i]].Type; } // Replace variable name with value and type with the value type
+                if (parameterType == Type.VARIABLE) { parameterType = interpreter.Variables[parameters[i]].Type; parameters[i] = interpreter.Variables[parameters[i]].Value; } // Replace variable name with value and type with the value type
                 functionInterpreter.Variables[Var[i]] = new Variable(Var[i], parameters[i], parameterType); 
             }
 
