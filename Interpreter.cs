@@ -71,9 +71,6 @@ namespace InterpreterLib
 
     }
 
-    
-
-
     public class Interpreter
     {
         public Dictionary<string, Variable> Variables;
@@ -116,18 +113,15 @@ namespace InterpreterLib
                     }
 
                     EvaluateFunctionRegister(functionText.ToString());
-                }
-                /////////////////////////////////    for var from x to y {}
-                else if (trimmedLine.StartsWith("for "))
+                } else if (trimmedLine.StartsWith("for ")) // for var from x to y {}
                 { // Case of the registration of a loop
-                    StringBuilder loopText = new StringBuilder(trimmedLine[4..]);
-
-
+                    string loopFirstLine = trimmedLine[4..];
+                    StringBuilder loopText = new StringBuilder();
 
                     //if (!(firstLine.EndsWith('{'))) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
-                    string loopVarName = trimmedLine.Split(' ')[0]; // Get the title of the loopVar
-                    string loopFromName = trimmedLine.Split(' ')[2]; // Get the title of the loopFrom
-                    string loopToName = trimmedLine.Split(' ')[4]; // Get the title of the loopTo
+                    string loopVarName = loopFirstLine.Split(' ')[0]; // Get the title of the loopVar
+                    string loopFromName = loopFirstLine.Split(' ')[2]; // Get the title of the loopFrom
+                    string loopToName = loopFirstLine.Split(' ')[4]; // Get the title of the loopTo
 
                     int loopFromType = EvaluateType(loopFromName);
                     int loopToType = EvaluateType(loopToName);
@@ -149,6 +143,8 @@ namespace InterpreterLib
 
                     Variables[loopVarName] = new Variable(loopVarName, loopFromName, Type.INTEGER);
 
+                    index++;
+
                     while (index < lines.Length && lines[index].StartsWith("\t") && !lines[index].EndsWith('}'))
                     { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
                         loopText.Append(lines[index].Replace("\t", "\n"));
@@ -167,11 +163,11 @@ namespace InterpreterLib
 
                     }
 
-                }//////////////////
+                } 
                 else if (EvaluateType(trimmedLine) == Type.FUNCTION)
                 {
                     EvaluateFunctionCall(trimmedLine);
-                }
+                 }
                 else
                 {
                     throw new Exception($"Error. {trimmedLine} is not recognized as a correct expression. ");
