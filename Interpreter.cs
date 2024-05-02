@@ -155,7 +155,7 @@ namespace InterpreterLib
                     int to = int.Parse(loopToName);
 
 
-                    for (int i = from;  i < to;  i++)
+                    for (int i = from;  i < to + 1;  i++)
                     {
                         Variables[loopVarName] = new Variable(loopVarName, i.ToString(), Type.INTEGER);
 
