@@ -128,13 +128,13 @@ namespace InterpreterLib
 
                     if (loopFromType == Type.VARIABLE)
                     {
-                        loopFromName = Variables[loopFromName].Value;
                         loopFromType = Variables[loopFromName].Type;
+                        loopFromName = Variables[loopFromName].Value;
                     }
                     if (loopToType == Type.VARIABLE)
                     {
-                        loopToName = Variables[loopToName].Value;
                         loopToType = Variables[loopToName].Type;
+                        loopToName = Variables[loopToName].Value;
                     }
                     if (loopFromType != Type.INTEGER || loopToType != Type.INTEGER)
                     {
