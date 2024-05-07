@@ -107,7 +107,7 @@ namespace InterpreterLib
 
                     index++;
 
-                    while (index < lines.Length && lines[index].StartsWith("\t") && !lines[index].EndsWith('}'))
+                    while (index < lines.Length && lines[index].StartsWith("\t"))
                     { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
                         functionText.Append($"\n{lines[index][1..]}");
                         index++;
@@ -146,7 +146,7 @@ namespace InterpreterLib
 
                     index++;
 
-                    while (index < lines.Length && lines[index].StartsWith("\t")) // && !lines[index].EndsWith('}'
+                    while (index < lines.Length && lines[index].StartsWith("\t")) //
                     { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
                         loopCode.Append($"\n{lines[index][1..]}");
                         index++;
