@@ -5,9 +5,11 @@ namespace InterpreterLib
 {
     public class Type
     {
-        public static readonly int STRING = 1;
-        public static readonly int INTEGER = 2;
-        public static readonly int FLOAT = 3;
+        public static readonly int BOOLEAN = 0;
+        public static readonly int INTEGER = 1;
+        public static readonly int FLOAT = 2;
+        public static readonly int STRING = 3;
+
         public static readonly int OPERATION = 4;
         public static readonly int VARIABLE = 5;
         public static readonly int FUNCTION = 6;
