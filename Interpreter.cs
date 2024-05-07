@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace InterpreterLib
@@ -467,6 +468,32 @@ namespace InterpreterLib
             }
 
             return pow;
+        }
+
+        public bool EvaluateEgual(string line)
+        {
+            string[] part = line.Trim().Split(" == "); // The trim need to be remove once we implet this method in the EvaluateOperation function
+
+            if (part.Length != 2) { throw new Exception("Invalid expression."); } 
+
+            string firstPart = part[0];
+            string secondPart = part[1];
+
+            int firstElementType = this.EvaluateType(firstPart);
+            int secondElementType = this.EvaluateType(secondPart);
+
+            if (firstElementType == Type.VARIABLE)
+            {
+                firstElementType = Variables[firstPart].Type;
+                firstPart = Variables[firstPart].Value;
+            }
+            if (secondElementType == Type.VARIABLE)
+            {
+                secondElementType = Variables[firstPart].Type;
+                secondPart = Variables[firstPart].Value;
+            }
+
+            return (firstElementType == secondElementType) && (firstPart == secondPart);
         }
 
         public int EvaluateType(string value)
