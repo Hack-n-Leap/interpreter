@@ -470,6 +470,62 @@ namespace InterpreterLib
             return pow;
         }
 
+        public bool EvaluateBooleanOperations(string line)
+        // This function manages the system of boolean operations and redirects each operation to the corresponding operations function.
+        // It take a calculation in string type as a parameter and return the result of it as a bool.
+        {
+            int openBracketIndex = 0;
+            int closeBracketIndex = 0;
+            int expressionIndex = 0;
+            string newExpression;
+
+            StringBuilder expressionBuilder = new StringBuilder(line);
+
+            if (line.StartsWith('(') && line.EndsWith(')')) { expressionBuilder = new StringBuilder(line[1..(line.Length - 1)]); } // Delete the bracket at the start and the end of the calculus.
+
+            while (expressionIndex < expressionBuilder.Length)
+            {
+                if (expressionBuilder.ToString()[expressionIndex] == '(') { openBracketIndex = expressionIndex; }
+                else if (expressionBuilder.ToString()[expressionIndex] == ')')
+                {
+                    closeBracketIndex = expressionIndex;
+                    expressionBuilder.Replace(expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex + 1)], EvaluateOperations(expressionBuilder.ToString()[(openBracketIndex + 1)..(closeBracketIndex)]).ToString());
+
+                    expressionIndex = 0;
+                }
+
+                expressionIndex++;
+            }
+
+            newExpression = expressionBuilder.ToString();
+
+            if (newExpression.Contains("==")) // Case of an egual test
+            {
+                return EvaluateEgual(newExpression);
+
+            }
+            else if (newExpression.Contains("!=")) // Case of an unegual test
+            {
+                return EvaluateUnegual(newExpression);
+            }
+            else if (newExpression.Contains(">")) // Case of a superior test
+            {
+                return EvaluateSuperior(newExpression);
+            }
+            else if (newExpression.Contains('<')) // Case of an inferior test
+            {
+                return EvaluateInferior(newExpression);
+            }
+            else if (this.EvaluateType(newExpression) == Type.BOOLEAN)
+            {
+                return bool.Parse(newExpression);
+            }
+            else
+            {
+                throw new Exception($"Unexcepted operation : ${newExpression}");
+            }
+        }
+
         public bool EvaluateEgual(string line)
         {
             string[] part = line.Trim().Split(" == "); // The trim need to be remove once we implet this method in the EvaluateOperation function
