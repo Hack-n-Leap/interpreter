@@ -542,7 +542,10 @@ namespace InterpreterLib
 
         public int EvaluateType(string value)
         {
-            if ((value.StartsWith("'") && value.EndsWith("'")) || (value.StartsWith('"') && value.EndsWith('"')))
+            if (value == "true" || value == "false")
+            {
+                return Type.BOOLEAN;
+            } else if ((value.StartsWith("'") && value.EndsWith("'")) || (value.StartsWith('"') && value.EndsWith('"')))
             {
                 return Type.STRING; // String
             }
@@ -558,7 +561,7 @@ namespace InterpreterLib
             {
                 return Type.VARIABLE; // Variable
             }
-            else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^') || value.Contains('%'))
+            else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^') || value.Contains("==") || value.Contains("!=") || value.Contains('>') || value.Contains('<'))
             {
                 return Type.OPERATION; // Operation
             }
