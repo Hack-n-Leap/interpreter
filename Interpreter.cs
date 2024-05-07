@@ -474,31 +474,63 @@ namespace InterpreterLib
         {
             string[] part = line.Trim().Split(" == "); // The trim need to be remove once we implet this method in the EvaluateOperation function
 
-            if (part.Length != 2) { throw new Exception("Invalid expression."); } 
+            if (part.Length != 2) { throw new Exception("Invalid expression."); } // Verify that there are exactly 2 values to be compared
 
+            // Extract the 2 values
             string firstPart = part[0];
             string secondPart = part[1];
 
+            // Get the types of the 2 parts
             int firstElementType = this.EvaluateType(firstPart);
             int secondElementType = this.EvaluateType(secondPart);
 
-            if (firstElementType == Type.VARIABLE)
+            if (firstElementType == Type.VARIABLE) // Replace the variable type by the type of his value and the content by the value of the variable
             {
                 firstElementType = Variables[firstPart].Type;
                 firstPart = Variables[firstPart].Value;
             }
-            if (secondElementType == Type.VARIABLE)
+            if (secondElementType == Type.VARIABLE) // Replace the variable type by the type of his value and the content by the value of the variable
             {
                 secondElementType = Variables[firstPart].Type;
                 secondPart = Variables[firstPart].Value;
             }
 
-            return (firstElementType == secondElementType) && (firstPart == secondPart);
+            return (firstElementType == secondElementType) && (firstPart == secondPart); // Verify that types and value are egual
         }
 
         public bool EvaluateUnegual(string line)
         {
-            return !(EvaluateEgual(line.Replace("!=", "==")));
+            return !(EvaluateEgual(line.Replace("!=", "=="))); // Return the opposite of the == operator
+        }
+
+        public bool EvaluateSuperior(string line)
+        {
+            string[] part = line.Trim().Split(" > "); // The trim need to be remove once we implet this method in the EvaluateOperation function
+
+            if (part.Length != 2) { throw new Exception("Invalid expression."); } // Verify that there are exactly 2 values to be compared
+
+            // Extract the 2 values
+            string firstPart = part[0];
+            string secondPart = part[1];
+
+            // Get the types of the 2 parts
+            int firstElementType = this.EvaluateType(firstPart);
+            int secondElementType = this.EvaluateType(secondPart);
+
+            if (firstElementType == Type.VARIABLE) // Replace the variable type by the type of his value and the content by the value of the variable
+            {
+                firstElementType = Variables[firstPart].Type;
+                firstPart = Variables[firstPart].Value;
+            }
+            if (secondElementType == Type.VARIABLE) // Replace the variable type by the type of his value and the content by the value of the variable
+            {
+                secondElementType = Variables[firstPart].Type;
+                secondPart = Variables[firstPart].Value;
+            }
+
+            if ((firstElementType != Type.INTEGER && firstElementType != Type.FLOAT) && (secondElementType != Type.INTEGER && secondElementType != Type.FLOAT)) { throw new Exception("Comparaison on unsuportable type"); }
+
+            return (firstElementType == secondElementType) && (int.Parse(firstPart) > int.Parse(secondPart)); // Verify that types and value are egual
         }
 
         public int EvaluateType(string value)
