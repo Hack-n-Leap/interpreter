@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace InterpreterLib
@@ -108,7 +109,7 @@ namespace InterpreterLib
 
                     while (index < lines.Length && lines[index].StartsWith("\t") && !lines[index].EndsWith('}'))
                     { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
-                        functionText.Append(lines[index].Replace("\t", "\n"));
+                        functionText.Append($"\n{lines[index][1..]}");
                         index++;
                     }
 
@@ -116,7 +117,7 @@ namespace InterpreterLib
                 } else if (trimmedLine.StartsWith("for ")) // for var from x to y {}
                 { // Case of the registration of a loop
                     string loopFirstLine = trimmedLine[4..];
-                    StringBuilder loopText = new StringBuilder();
+                    StringBuilder loopCode = new StringBuilder();
 
                     //if (!(firstLine.EndsWith('{'))) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
                     string loopVarName = loopFirstLine.Split(' ')[0]; // Get the title of the loopVar
@@ -145,22 +146,21 @@ namespace InterpreterLib
 
                     index++;
 
-                    while (index < lines.Length && lines[index].StartsWith("\t") && !lines[index].EndsWith('}'))
+                    while (index < lines.Length && lines[index].StartsWith("\t")) // && !lines[index].EndsWith('}'
                     { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
-                        loopText.Append(lines[index].Replace("\t", "\n"));
+                        loopCode.Append($"\n{lines[index][1..]}");
                         index++;
                     }
 
                     int from = int.Parse(loopFromName);
                     int to = int.Parse(loopToName);
 
+                    // Console.WriteLine(loopText.ToString());
 
                     for (int i = from;  i < to + 1;  i++)
                     {
                         Variables[loopVarName] = new Variable(loopVarName, i.ToString(), Type.INTEGER);
-
-                        this.EvaluateCode(loopText.ToString());
-
+                        this.EvaluateCode(loopCode.ToString());
                     }
 
                 } 
