@@ -526,6 +526,35 @@ namespace InterpreterLib
             }
         }
 
+        public bool EvaluateAnd(string line)
+        {
+            string[] parts = line.Split("&");
+
+            if (parts.Length != 2) { throw new Exception("Error. Invalid expression."); }
+
+            string firstPart = parts[0];
+            string secondPart = parts[1];
+
+            int firstPartType = EvaluateType(firstPart);
+            int secondPartType = EvaluateType(secondPart);
+
+            if (firstPartType == Type.VARIABLE)
+            {
+                firstPartType = Variables[firstPart].Type;
+                firstPart = Variables[firstPart].Value;
+            }
+
+            if (secondPartType == Type.VARIABLE)
+            {
+                secondPartType = Variables[secondPart].Type;
+                secondPart = Variables[secondPart].Value;
+            }
+
+            if (firstPartType != Type.BOOLEAN || secondPartType != Type.BOOLEAN) { throw new Exception("Error. Unable to calcul the 'AND' operator between types different that BOOLEAN"); }
+
+            return bool.Parse(firstPart) && bool.Parse(secondPart);
+        }
+
         public bool EvaluateEgual(string line)
         {
             string[] part = line.Trim().Split(" == "); // The trim need to be remove once we implet this method in the EvaluateOperation function
