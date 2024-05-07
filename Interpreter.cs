@@ -496,6 +496,11 @@ namespace InterpreterLib
             return (firstElementType == secondElementType) && (firstPart == secondPart);
         }
 
+        public bool EvaluateUnegual(string line)
+        {
+            return !(EvaluateEgual(line.Replace("!=", "==")));
+        }
+
         public int EvaluateType(string value)
         {
             if ((value.StartsWith("'") && value.EndsWith("'")) || (value.StartsWith('"') && value.EndsWith('"')))
