@@ -533,6 +533,13 @@ namespace InterpreterLib
             return (firstElementType == secondElementType) && (int.Parse(firstPart) > int.Parse(secondPart)); // Verify that types and value are egual
         }
 
+        public bool EvaluateInferior(string line)
+        {
+            if (EvaluateEgual(line.Replace("<", "=="))) { return false; }
+
+            return !(EvaluateSuperior(line.Replace("<", ">"))); // Return the opposite of the > operator
+        }
+
         public int EvaluateType(string value)
         {
             if ((value.StartsWith("'") && value.EndsWith("'")) || (value.StartsWith('"') && value.EndsWith('"')))
