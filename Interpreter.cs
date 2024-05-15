@@ -494,10 +494,10 @@ namespace InterpreterLib
 
                     if (bracketExpression.Contains('+') || bracketExpression.Contains('-') || bracketExpression.Contains('*') || bracketExpression.Contains('/') || bracketExpression.Contains('^'))
                     {
-                        expressionBuilder.Replace(bracketExpression, EvaluateOperations(expressionBuilder.ToString()[(openBracketIndex + 1)..(closeBracketIndex)]).ToString());
+                        expressionBuilder.Replace(bracketExpression, EvaluateOperations(bracketExpression).ToString());
                     } else
                     {
-                        expressionBuilder.Replace(expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex + 1)], EvaluateBooleanOperations(expressionBuilder.ToString()[(openBracketIndex + 1)..(closeBracketIndex)]).ToString());
+                        expressionBuilder.Replace(bracketExpression, EvaluateBooleanOperations(bracketExpression).ToString());
                     }
 
 
