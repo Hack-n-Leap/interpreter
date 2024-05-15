@@ -489,7 +489,17 @@ namespace InterpreterLib
                 else if (expressionBuilder.ToString()[expressionIndex] == ')')
                 {
                     closeBracketIndex = expressionIndex;
-                    expressionBuilder.Replace(expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex + 1)], EvaluateOperations(expressionBuilder.ToString()[(openBracketIndex + 1)..(closeBracketIndex)]).ToString());
+
+                    string bracketExpression = expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex + 1)];
+
+                    if (bracketExpression.Contains('+') || bracketExpression.Contains('-') || bracketExpression.Contains('*') || bracketExpression.Contains('/') || bracketExpression.Contains('^'))
+                    {
+                        expressionBuilder.Replace(bracketExpression, EvaluateOperations(expressionBuilder.ToString()[(openBracketIndex + 1)..(closeBracketIndex)]).ToString());
+                    } else
+                    {
+                        expressionBuilder.Replace(expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex + 1)], EvaluateBooleanOperations(expressionBuilder.ToString()[(openBracketIndex + 1)..(closeBracketIndex)]).ToString());
+                    }
+
 
                     expressionIndex = 0;
                 }
