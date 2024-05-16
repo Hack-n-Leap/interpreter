@@ -553,6 +553,17 @@ namespace InterpreterLib
                 secondPart = Variables[secondPart].Value;
             }
 
+            if (firstPartType == Type.OPERATION_NUMBER)
+            {
+                firstPart = EvaluateOperations(firstPart).ToString();
+                firstPartType = EvaluateType(firstPart);
+            }
+            if (secondPartType == Type.OPERATION_NUMBER)
+            {
+                secondPart = EvaluateOperations(secondPart).ToString();
+                secondPartType = EvaluateType(secondPart);
+            }
+
             if (firstPartType != Type.BOOLEAN || secondPartType != Type.BOOLEAN) { throw new Exception("Error. Unable to calcul the 'AND' operator between types different that BOOLEAN"); }
 
             return bool.Parse(firstPart) && bool.Parse(secondPart);
@@ -581,6 +592,17 @@ namespace InterpreterLib
             {
                 secondElementType = Variables[firstPart].Type;
                 secondPart = Variables[firstPart].Value;
+            }
+
+            if (firstElementType == Type.OPERATION_NUMBER)
+            {
+                firstPart = EvaluateOperations(firstPart).ToString();
+                firstElementType = EvaluateType(firstPart);
+            }
+            if (secondElementType == Type.OPERATION_NUMBER)
+            {
+                secondPart = EvaluateOperations(secondPart).ToString();
+                secondElementType= EvaluateType(secondPart);
             }
 
             return (firstElementType == secondElementType) && (firstPart == secondPart); // Verify that types and value are egual
@@ -614,6 +636,17 @@ namespace InterpreterLib
             {
                 secondElementType = Variables[firstPart].Type;
                 secondPart = Variables[firstPart].Value;
+            }
+
+            if (firstElementType == Type.OPERATION_NUMBER)
+            {
+                firstPart = EvaluateOperations(firstPart).ToString();
+                firstElementType = EvaluateType(firstPart);
+            }
+            if (secondElementType == Type.OPERATION_NUMBER)
+            {
+                secondPart = EvaluateOperations(secondPart).ToString();
+                secondElementType = EvaluateType(secondPart);
             }
 
             if ((firstElementType != Type.INTEGER && firstElementType != Type.FLOAT) && (secondElementType != Type.INTEGER && secondElementType != Type.FLOAT)) { throw new Exception("Comparaison on unsuportable type"); }
