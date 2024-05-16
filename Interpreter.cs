@@ -10,10 +10,10 @@ namespace InterpreterLib
         public static readonly int INTEGER = 1;
         public static readonly int FLOAT = 2;
         public static readonly int STRING = 3;
-
-        public static readonly int OPERATION = 4;
-        public static readonly int VARIABLE = 5;
-        public static readonly int FUNCTION = 6;
+        public static readonly int OPERATION_NUMBER = 4;
+        public static readonly int OPERATION_BOOL = 5;
+        public static readonly int VARIABLE = 6;
+        public static readonly int FUNCTION = 7;
 
     }
 
@@ -234,7 +234,7 @@ namespace InterpreterLib
             {
                 Console.WriteLine(Variables[line].Value);
             }
-            else if (lineType == Type.OPERATION)
+            else if (lineType == Type.OPERATION_NUMBER)
             {
                 Console.WriteLine(EvaluateOperations(line));
             }
@@ -320,7 +320,7 @@ namespace InterpreterLib
                 {
                     sum += double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION_NUMBER)
                 {
                     sum += double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -355,7 +355,7 @@ namespace InterpreterLib
                 {
                     sum -= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION_NUMBER)
                 {
                     sum -= double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -381,7 +381,7 @@ namespace InterpreterLib
                 {
                     total *= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION_NUMBER)
                 {
                     total *= double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -417,7 +417,7 @@ namespace InterpreterLib
                 {
                     total /= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION_NUMBER)
                 {
                     total /= double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -457,7 +457,7 @@ namespace InterpreterLib
                 {
                     pow = Math.Pow(pow, double.Parse(Variables[part].Value, CultureInfo.InvariantCulture));
                 }
-                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION_NUMBER)
                 {
                     pow = Math.Pow(pow, double.Parse(part, CultureInfo.InvariantCulture));
                 }
@@ -658,7 +658,7 @@ namespace InterpreterLib
             }
             else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^') || value.Contains("==") || value.Contains("!=") || value.Contains('>') || value.Contains('<'))
             {
-                return Type.OPERATION; // Operation
+                return Type.OPERATION_NUMBER; // Operation
             }
             else if (Functions.ContainsKey(value.Split('(')[0]))
             {
