@@ -656,9 +656,12 @@ namespace InterpreterLib
             {
                 return Type.VARIABLE; // Variable
             }
-            else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^') || value.Contains("==") || value.Contains("!=") || value.Contains('>') || value.Contains('<'))
+            else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^'))
             {
                 return Type.OPERATION_NUMBER; // Operation
+            } else if (value.Contains('&') || value.Contains('|') || value.Contains("==") || value.Contains('>') || value.Contains('<') || value.Contains(">=") || value.Contains("<="))
+            {   
+                return Type.OPERATION_BOOL;
             }
             else if (Functions.ContainsKey(value.Split('(')[0]))
             {
