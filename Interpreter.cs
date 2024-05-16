@@ -505,7 +505,6 @@ namespace InterpreterLib
             if (newExpression.Contains("==")) // Case of an egual test
             {
                 return EvaluateEgual(newExpression);
-
             }
             else if (newExpression.Contains("!=")) // Case of an unegual test
             {
@@ -518,6 +517,12 @@ namespace InterpreterLib
             else if (newExpression.Contains('<')) // Case of an inferior test
             {
                 return EvaluateInferior(newExpression);
+            } else if (newExpression.Contains('&'))
+            {
+                return EvaluateAnd(newExpression);
+            } else if (newExpression.Contains('|'))
+            {
+                return EvaluateOr(newExpression);
             }
             else if (this.EvaluateType(newExpression) == Type.BOOLEAN)
             {
@@ -535,8 +540,8 @@ namespace InterpreterLib
 
             if (parts.Length != 2) { throw new Exception("Error. Invalid expression."); }
 
-            string firstPart = parts[0];
-            string secondPart = parts[1];
+            string firstPart = parts[0][..(parts[0].Length - 1)]; // Remove space at the end of the string
+            string secondPart = parts[1][1..]; // Remove space at the begginning of the string
 
             int firstPartType = EvaluateType(firstPart);
             int secondPartType = EvaluateType(secondPart);
@@ -553,20 +558,38 @@ namespace InterpreterLib
                 secondPart = Variables[secondPart].Value;
             }
 
-            if (firstPartType == Type.OPERATION_NUMBER)
+            if (firstPartType != Type.BOOLEAN || secondPartType != Type.BOOLEAN) { throw new Exception("Error. Unable to calcul the 'AND' operator between types different that BOOLEAN"); }
+
+            return bool.Parse(firstPart) && bool.Parse(secondPart);
+        }
+
+        public bool EvaluateOr(string line)
+        {
+            string[] parts = line.Split("|");
+
+            if (parts.Length != 2) { throw new Exception("Error. Invalid expression."); }
+
+            string firstPart = parts[0][..(parts[0].Length - 1)]; // Remove space at the end of the string
+            string secondPart = parts[1][1..]; // Remove space at the begginning of the string
+
+            int firstPartType = EvaluateType(firstPart);
+            int secondPartType = EvaluateType(secondPart);
+
+            if (firstPartType == Type.VARIABLE)
             {
-                firstPart = EvaluateOperations(firstPart).ToString();
-                firstPartType = EvaluateType(firstPart);
+                firstPartType = Variables[firstPart].Type;
+                firstPart = Variables[firstPart].Value;
             }
-            if (secondPartType == Type.OPERATION_NUMBER)
+
+            if (secondPartType == Type.VARIABLE)
             {
-                secondPart = EvaluateOperations(secondPart).ToString();
-                secondPartType = EvaluateType(secondPart);
+                secondPartType = Variables[secondPart].Type;
+                secondPart = Variables[secondPart].Value;
             }
 
             if (firstPartType != Type.BOOLEAN || secondPartType != Type.BOOLEAN) { throw new Exception("Error. Unable to calcul the 'AND' operator between types different that BOOLEAN"); }
 
-            return bool.Parse(firstPart) && bool.Parse(secondPart);
+            return bool.Parse(firstPart) || bool.Parse(secondPart);
         }
 
         public bool EvaluateEgual(string line)
