@@ -492,14 +492,7 @@ namespace InterpreterLib
 
                     string bracketExpression = expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex + 1)];
 
-                    if (bracketExpression.Contains('+') || bracketExpression.Contains('-') || bracketExpression.Contains('*') || bracketExpression.Contains('/') || bracketExpression.Contains('^'))
-                    {
-                        expressionBuilder.Replace(bracketExpression, EvaluateOperations(bracketExpression).ToString());
-                    } else
-                    {
-                        expressionBuilder.Replace(bracketExpression, EvaluateBooleanOperations(bracketExpression).ToString());
-                    }
-
+                    expressionBuilder.Replace(bracketExpression, EvaluateBooleanOperations(bracketExpression).ToString());
 
                     expressionIndex = 0;
                 }
