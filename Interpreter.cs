@@ -237,6 +237,9 @@ namespace InterpreterLib
             else if (lineType == Type.OPERATION_NUMBER)
             {
                 Console.WriteLine(EvaluateOperations(line));
+            } else if (lineType == Type.OPERATION_BOOL)
+            {
+                Console.Write(EvaluateBooleanOperations(line));
             }
             else if (lineType == Type.STRING)
             {
