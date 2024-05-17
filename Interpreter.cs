@@ -514,11 +514,15 @@ namespace InterpreterLib
             {
                 return EvaluateUnegual(newExpression);
             } 
-            else if (newExpression.Contains(">="))
+            else if (newExpression.Contains(">=")) // Case of a superior or egual test
             {
                 return EvaluateSuperiorEgual(newExpression);
             }
-            else if (newExpression.Contains(">")) // Case of a superior test
+            else if (newExpression.Contains("<=")) // Case of an inferior or egual test
+            {
+                return EvaluateInferiorEgual(newExpression);
+            }
+            else if (newExpression.Contains('>')) // Case of a superior test
             {
                 return EvaluateSuperior(newExpression);
             }
@@ -708,6 +712,11 @@ namespace InterpreterLib
         public bool EvaluateSuperiorEgual(string line)
         {
             return EvaluateSuperior(line.Replace(">=", ">")) || EvaluateEgual(line.Replace(">=", "=="));
+        }
+
+        public bool EvaluateInferiorEgual(string line)
+        {
+            return EvaluateInferior(line.Replace("<=", "<")) || EvaluateEgual(line.Replace("<=", "=="));
         }
 
         public int EvaluateType(string value)
