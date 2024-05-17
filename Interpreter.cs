@@ -227,6 +227,14 @@ namespace InterpreterLib
             {
                 varType = Variables[var[1]].Type;
                 var[1] = Variables[var[1]].Value;
+            } else if (varType == Type.OPERATION_NUMBER)
+            {
+                var[1] = EvaluateOperations(var[1]).ToString();
+                varType = EvaluateType(var[1]);
+            } else if (varType == Type.OPERATION_BOOL)
+            {
+                var[1] = EvaluateBooleanOperations(var[1]).ToString();
+                varType = Type.BOOLEAN;
             }
 
             Variables[var[0]] = new Variable(var[0], var[1], varType);
