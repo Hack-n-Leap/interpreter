@@ -115,6 +115,7 @@ namespace InterpreterLib
                     }
 
                     EvaluateFunctionRegister(functionText.ToString());
+
                 } else if (trimmedLine.StartsWith("for ")) // for var from x to y {}
                 { // Case of the registration of a loop
                     string loopFirstLine = trimmedLine[4..];
@@ -124,6 +125,9 @@ namespace InterpreterLib
                     string loopVarName = loopFirstLine.Split(' ')[0]; // Get the title of the loopVar
                     string loopFromName = loopFirstLine.Split(' ')[2]; // Get the title of the loopFrom
                     string loopToName = loopFirstLine.Split(' ')[4]; // Get the title of the loopTo
+                    loopToName = loopToName[..(loopToName.Length - 1)];
+
+                    if (!loopFirstLine.EndsWith(':')) { throw new Exception("Invalid syntax."); }
 
                     int loopFromType = EvaluateType(loopFromName);
                     int loopToType = EvaluateType(loopToName);
@@ -163,6 +167,8 @@ namespace InterpreterLib
                         Variables[loopVarName] = new Variable(loopVarName, i.ToString(), Type.INTEGER);
                         this.EvaluateCode(loopCode.ToString());
                     }
+
+                    index--;
 
                 } 
                 else if (trimmedLine.StartsWith("if "))
