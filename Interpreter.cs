@@ -165,10 +165,34 @@ namespace InterpreterLib
                     }
 
                 } 
+                else if (trimmedLine.StartsWith("if "))
+                {
+                    string loopFirstLine = trimmedLine[3..];
+                    StringBuilder ifCode = new StringBuilder();
+
+                    //if (!(firstLine.EndsWith('{'))) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
+                    string condition = loopFirstLine.Split(':')[0];
+
+                    index++;
+
+                    while (index < lines.Length && lines[index].StartsWith("\t")) //
+                    { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
+                        ifCode.Append($"\n{lines[index][1..]}");
+                        index++;
+                    }
+
+                    if (EvaluateBooleanOperations(condition))
+                    {
+                        EvaluateCode(ifCode.ToString());
+                    }
+
+                    index--;
+                }
+                
                 else if (EvaluateType(trimmedLine) == Type.FUNCTION)
                 {
                     EvaluateFunctionCall(trimmedLine);
-                 }
+                }
                 else
                 {
                     throw new Exception($"Error. {trimmedLine} is not recognized as a correct expression. ");
