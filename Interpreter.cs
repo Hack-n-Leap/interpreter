@@ -480,11 +480,12 @@ namespace InterpreterLib
             int openBracketIndex = 0;
             int closeBracketIndex = 0;
             int expressionIndex = 0;
+            int bracketBalance = 0;
             string newExpression;
 
             StringBuilder expressionBuilder = new StringBuilder(line);
 
-            if (line.StartsWith('(') && line.EndsWith(')')) { expressionBuilder = new StringBuilder(line[1..(line.Length - 1)]); } // Delete the bracket at the start and the end of the calculus.
+            if (line.StartsWith('(') && line.EndsWith(')') && AreBracketsBalanced(line)) { expressionBuilder = new StringBuilder(line[1..(line.Length - 1)]); } // Delete the bracket at the start and the end of the calculus.
 
             while (expressionIndex < expressionBuilder.Length)
             {
@@ -493,9 +494,9 @@ namespace InterpreterLib
                 {
                     closeBracketIndex = expressionIndex;
 
-                    string bracketExpression = expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex + 1)];
+                    string bracketExpression = expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex)];
 
-                    expressionBuilder.Replace(bracketExpression, EvaluateBooleanOperations(bracketExpression).ToString());
+                    expressionBuilder.Replace(expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex + 1)], EvaluateBooleanOperations(expressionBuilder.ToString()[(openBracketIndex + 1)..(closeBracketIndex)]).ToString());
 
                     expressionIndex = 0;
                 }
@@ -535,6 +536,19 @@ namespace InterpreterLib
             {
                 throw new Exception($"Unexcepted operation : ${newExpression}");
             }
+        }
+
+        public bool AreBracketsBalanced(string expression)
+        {
+            int balance = 0;
+            foreach (char c in expression)
+            {
+                if (c == '(') { balance++; }
+                else if (c == ')') { balance--; }
+                if (balance == 0) { return false; }
+            }
+
+            return balance == 0;
         }
 
         public bool EvaluateAnd(string line)
@@ -689,7 +703,7 @@ namespace InterpreterLib
 
         public int EvaluateType(string value)
         {
-            if (value == "true" || value == "false")
+            if (value == "True" || value == "False")
             {
                 return Type.BOOLEAN;
             } else if ((value.StartsWith("'") && value.EndsWith("'")) || (value.StartsWith('"') && value.EndsWith('"')))
