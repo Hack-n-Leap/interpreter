@@ -116,6 +116,8 @@ namespace InterpreterLib
 
                     EvaluateFunctionRegister(functionText.ToString());
 
+                    index--;
+
                 } else if (trimmedLine.StartsWith("for ")) // for var from x to y {}
                 { // Case of the registration of a loop
                     string loopFirstLine = trimmedLine[4..];
@@ -238,7 +240,7 @@ namespace InterpreterLib
             int openBracketIndex = firstLine.IndexOf("(");
             int closeBracketIndex = firstLine.IndexOf(")");
 
-            if (openBracketIndex ==  -1 || closeBracketIndex == -1 || !(firstLine.EndsWith('{')) || functionTitle.Length == 0) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
+            if (openBracketIndex ==  -1 || closeBracketIndex == -1 || !(firstLine.EndsWith(':')) || functionTitle.Length == 0) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
 
             Function function = new Function(functionTitle, lines[(firstLine.Length + 1)..], firstLine[(openBracketIndex + 1)..closeBracketIndex].Split(", ")); // Create a new Function objet that store all the informations about the new function.
             Functions[function.Name] = function; // Register the created function into the program function dictionnary.
