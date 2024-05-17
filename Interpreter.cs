@@ -1,16 +1,19 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace InterpreterLib
 {
     public class Type
     {
-        public static readonly int STRING = 1;
-        public static readonly int INTEGER = 2;
-        public static readonly int FLOAT = 3;
-        public static readonly int OPERATION = 4;
-        public static readonly int VARIABLE = 5;
-        public static readonly int FUNCTION = 6;
+        public static readonly int BOOLEAN = 0;
+        public static readonly int INTEGER = 1;
+        public static readonly int FLOAT = 2;
+        public static readonly int STRING = 3;
+        public static readonly int OPERATION_NUMBER = 4;
+        public static readonly int OPERATION_BOOL = 5;
+        public static readonly int VARIABLE = 6;
+        public static readonly int FUNCTION = 7;
 
     }
 
@@ -231,9 +234,12 @@ namespace InterpreterLib
             {
                 Console.WriteLine(Variables[line].Value);
             }
-            else if (lineType == Type.OPERATION)
+            else if (lineType == Type.OPERATION_NUMBER)
             {
                 Console.WriteLine(EvaluateOperations(line));
+            } else if (lineType == Type.OPERATION_BOOL)
+            {
+                Console.Write(EvaluateBooleanOperations(line));
             }
             else if (lineType == Type.STRING)
             {
@@ -317,7 +323,7 @@ namespace InterpreterLib
                 {
                     sum += double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION_NUMBER)
                 {
                     sum += double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -352,7 +358,7 @@ namespace InterpreterLib
                 {
                     sum -= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION_NUMBER)
                 {
                     sum -= double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -378,7 +384,7 @@ namespace InterpreterLib
                 {
                     total *= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION_NUMBER)
                 {
                     total *= double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -414,7 +420,7 @@ namespace InterpreterLib
                 {
                     total /= double.Parse(Variables[part].Value, CultureInfo.InvariantCulture);
                 }
-                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION_NUMBER)
                 {
                     total /= double.Parse(part, CultureInfo.InvariantCulture);
                 }
@@ -454,7 +460,7 @@ namespace InterpreterLib
                 {
                     pow = Math.Pow(pow, double.Parse(Variables[part].Value, CultureInfo.InvariantCulture));
                 }
-                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION)
+                else if (partType == Type.INTEGER || partType == Type.FLOAT || partType == Type.OPERATION_NUMBER)
                 {
                     pow = Math.Pow(pow, double.Parse(part, CultureInfo.InvariantCulture));
                 }
@@ -467,9 +473,258 @@ namespace InterpreterLib
             return pow;
         }
 
+        public bool EvaluateBooleanOperations(string line)
+        // This function manages the system of boolean operations and redirects each operation to the corresponding operations function.
+        // It take a calculation in string type as a parameter and return the result of it as a bool.
+        {
+            int openBracketIndex = 0;
+            int closeBracketIndex = 0;
+            int expressionIndex = 0;
+            int bracketBalance = 0;
+            string newExpression;
+
+            StringBuilder expressionBuilder = new StringBuilder(line);
+
+            if (line.StartsWith('(') && line.EndsWith(')') && AreBracketsBalanced(line)) { expressionBuilder = new StringBuilder(line[1..(line.Length - 1)]); } // Delete the bracket at the start and the end of the calculus.
+
+            while (expressionIndex < expressionBuilder.Length)
+            {
+                if (expressionBuilder.ToString()[expressionIndex] == '(') { openBracketIndex = expressionIndex; }
+                else if (expressionBuilder.ToString()[expressionIndex] == ')')
+                {
+                    closeBracketIndex = expressionIndex;
+
+                    string bracketExpression = expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex)];
+
+                    expressionBuilder.Replace(expressionBuilder.ToString()[(openBracketIndex)..(closeBracketIndex + 1)], EvaluateBooleanOperations(expressionBuilder.ToString()[(openBracketIndex + 1)..(closeBracketIndex)]).ToString());
+
+                    expressionIndex = 0;
+                }
+
+                expressionIndex++;
+            }
+
+            newExpression = expressionBuilder.ToString();
+
+            if (newExpression.Contains("==")) // Case of an egual test
+            {
+                return EvaluateEgual(newExpression);
+            }
+            else if (newExpression.Contains("!=")) // Case of an unegual test
+            {
+                return EvaluateUnegual(newExpression);
+            } 
+            else if (newExpression.Contains(">=")) // Case of a superior or egual test
+            {
+                return EvaluateSuperiorEgual(newExpression);
+            }
+            else if (newExpression.Contains("<=")) // Case of an inferior or egual test
+            {
+                return EvaluateInferiorEgual(newExpression);
+            }
+            else if (newExpression.Contains('>')) // Case of a superior test
+            {
+                return EvaluateSuperior(newExpression);
+            }
+            else if (newExpression.Contains('<')) // Case of an inferior test
+            {
+                return EvaluateInferior(newExpression);
+            } else if (newExpression.Contains('&'))
+            {
+                return EvaluateAnd(newExpression);
+            } else if (newExpression.Contains('|'))
+            {
+                return EvaluateOr(newExpression);
+            }
+            else if (this.EvaluateType(newExpression) == Type.BOOLEAN)
+            {
+                return bool.Parse(newExpression);
+            }
+            else
+            {
+                throw new Exception($"Unexcepted operation : ${newExpression}");
+            }
+        }
+
+        public bool AreBracketsBalanced(string expression)
+        {
+            int balance = 0;
+            foreach (char c in expression)
+            {
+                if (c == '(') { balance++; }
+                else if (c == ')') { balance--; }
+                if (balance == 0) { return false; }
+            }
+
+            return balance == 0;
+        }
+
+        public bool EvaluateAnd(string line)
+        {
+            string[] parts = line.Split("&");
+
+            if (parts.Length != 2) { throw new Exception("Error. Invalid expression."); }
+
+            string firstPart = parts[0][..(parts[0].Length - 1)]; // Remove space at the end of the string
+            string secondPart = parts[1][1..]; // Remove space at the begginning of the string
+
+            int firstPartType = EvaluateType(firstPart);
+            int secondPartType = EvaluateType(secondPart);
+
+            if (firstPartType == Type.VARIABLE)
+            {
+                firstPartType = Variables[firstPart].Type;
+                firstPart = Variables[firstPart].Value;
+            }
+
+            if (secondPartType == Type.VARIABLE)
+            {
+                secondPartType = Variables[secondPart].Type;
+                secondPart = Variables[secondPart].Value;
+            }
+
+            if (firstPartType != Type.BOOLEAN || secondPartType != Type.BOOLEAN) { throw new Exception("Error. Unable to calcul the 'AND' operator between types different that BOOLEAN"); }
+
+            return bool.Parse(firstPart) && bool.Parse(secondPart);
+        }
+
+        public bool EvaluateOr(string line)
+        {
+            string[] parts = line.Split("|");
+
+            if (parts.Length != 2) { throw new Exception("Error. Invalid expression."); }
+
+            string firstPart = parts[0][..(parts[0].Length - 1)]; // Remove space at the end of the string
+            string secondPart = parts[1][1..]; // Remove space at the begginning of the string
+
+            int firstPartType = EvaluateType(firstPart);
+            int secondPartType = EvaluateType(secondPart);
+
+            if (firstPartType == Type.VARIABLE)
+            {
+                firstPartType = Variables[firstPart].Type;
+                firstPart = Variables[firstPart].Value;
+            }
+
+            if (secondPartType == Type.VARIABLE)
+            {
+                secondPartType = Variables[secondPart].Type;
+                secondPart = Variables[secondPart].Value;
+            }
+
+            if (firstPartType != Type.BOOLEAN || secondPartType != Type.BOOLEAN) { throw new Exception("Error. Unable to calcul the 'AND' operator between types different that BOOLEAN"); }
+
+            return bool.Parse(firstPart) || bool.Parse(secondPart);
+        }
+
+        public bool EvaluateEgual(string line)
+        {
+            string[] part = line.Trim().Split(" == "); // The trim need to be remove once we implet this method in the EvaluateOperation function
+
+            if (part.Length != 2) { throw new Exception("Invalid expression."); } // Verify that there are exactly 2 values to be compared
+
+            // Extract the 2 values
+            string firstPart = part[0];
+            string secondPart = part[1];
+
+            // Get the types of the 2 parts
+            int firstElementType = this.EvaluateType(firstPart);
+            int secondElementType = this.EvaluateType(secondPart);
+
+            if (firstElementType == Type.VARIABLE) // Replace the variable type by the type of his value and the content by the value of the variable
+            {
+                firstElementType = Variables[firstPart].Type;
+                firstPart = Variables[firstPart].Value;
+            }
+            if (secondElementType == Type.VARIABLE) // Replace the variable type by the type of his value and the content by the value of the variable
+            {
+                secondElementType = Variables[firstPart].Type;
+                secondPart = Variables[firstPart].Value;
+            }
+
+            if (firstElementType == Type.OPERATION_NUMBER)
+            {
+                firstPart = EvaluateOperations(firstPart).ToString();
+                firstElementType = EvaluateType(firstPart);
+            }
+            if (secondElementType == Type.OPERATION_NUMBER)
+            {
+                secondPart = EvaluateOperations(secondPart).ToString();
+                secondElementType= EvaluateType(secondPart);
+            }
+
+            return (firstElementType == secondElementType) && (firstPart == secondPart); // Verify that types and value are egual
+        }
+
+        public bool EvaluateUnegual(string line)
+        {
+            return !(EvaluateEgual(line.Replace("!=", "=="))); // Return the opposite of the == operator
+        }
+
+        public bool EvaluateSuperior(string line)
+        {
+            string[] part = line.Trim().Split(" > "); // The trim need to be remove once we implet this method in the EvaluateOperation function
+
+            if (part.Length != 2) { throw new Exception("Invalid expression."); } // Verify that there are exactly 2 values to be compared
+
+            // Extract the 2 values
+            string firstPart = part[0];
+            string secondPart = part[1];
+
+            // Get the types of the 2 parts
+            int firstElementType = this.EvaluateType(firstPart);
+            int secondElementType = this.EvaluateType(secondPart);
+
+            if (firstElementType == Type.VARIABLE) // Replace the variable type by the type of his value and the content by the value of the variable
+            {
+                firstElementType = Variables[firstPart].Type;
+                firstPart = Variables[firstPart].Value;
+            }
+            if (secondElementType == Type.VARIABLE) // Replace the variable type by the type of his value and the content by the value of the variable
+            {
+                secondElementType = Variables[firstPart].Type;
+                secondPart = Variables[firstPart].Value;
+            }
+
+            if (firstElementType == Type.OPERATION_NUMBER)
+            {
+                firstPart = EvaluateOperations(firstPart).ToString();
+                firstElementType = EvaluateType(firstPart);
+            }
+            if (secondElementType == Type.OPERATION_NUMBER)
+            {
+                secondPart = EvaluateOperations(secondPart).ToString();
+                secondElementType = EvaluateType(secondPart);
+            }
+
+            if ((firstElementType != Type.INTEGER && firstElementType != Type.FLOAT) && (secondElementType != Type.INTEGER && secondElementType != Type.FLOAT)) { throw new Exception("Comparaison on unsuportable type"); }
+
+            return (firstElementType == secondElementType) && (int.Parse(firstPart) > int.Parse(secondPart)); // Verify that types and value are egual
+        }
+
+        public bool EvaluateInferior(string line)
+        {
+            if (EvaluateEgual(line.Replace("<", "=="))) { return false; }
+
+            return !(EvaluateSuperior(line.Replace("<", ">"))); // Return the opposite of the > operator
+        }
+
+        public bool EvaluateSuperiorEgual(string line)
+        {
+            return EvaluateSuperior(line.Replace(">=", ">")) || EvaluateEgual(line.Replace(">=", "=="));
+        }
+
+        public bool EvaluateInferiorEgual(string line)
+        {
+            return EvaluateInferior(line.Replace("<=", "<")) || EvaluateEgual(line.Replace("<=", "=="));
+        }
+
         public int EvaluateType(string value)
         {
-            if ((value.StartsWith("'") && value.EndsWith("'")) || (value.StartsWith('"') && value.EndsWith('"')))
+            if (value == "True" || value == "False")
+            {
+                return Type.BOOLEAN;
+            } else if ((value.StartsWith("'") && value.EndsWith("'")) || (value.StartsWith('"') && value.EndsWith('"')))
             {
                 return Type.STRING; // String
             }
@@ -485,10 +740,14 @@ namespace InterpreterLib
             {
                 return Type.VARIABLE; // Variable
             }
-            else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^') || value.Contains('%'))
+            else if (value.Contains('&') || value.Contains('|') || value.Contains("==") || value.Contains('>') || value.Contains('<') || value.Contains(">=") || value.Contains("<="))
             {
-                return Type.OPERATION; // Operation
+                return Type.OPERATION_BOOL;
             }
+            else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^'))
+            {
+                return Type.OPERATION_NUMBER; // Operation
+            } 
             else if (Functions.ContainsKey(value.Split('(')[0]))
             {
                 return Type.FUNCTION; // Function
