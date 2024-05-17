@@ -513,6 +513,10 @@ namespace InterpreterLib
             else if (newExpression.Contains("!=")) // Case of an unegual test
             {
                 return EvaluateUnegual(newExpression);
+            } 
+            else if (newExpression.Contains(">="))
+            {
+                return EvaluateSuperiorEgual(newExpression);
             }
             else if (newExpression.Contains(">")) // Case of a superior test
             {
@@ -701,6 +705,11 @@ namespace InterpreterLib
             return !(EvaluateSuperior(line.Replace("<", ">"))); // Return the opposite of the > operator
         }
 
+        public bool EvaluateSuperiorEgual(string line)
+        {
+            return EvaluateSuperior(line.Replace(">=", ">")) || EvaluateEgual(line.Replace(">=", "=="));
+        }
+
         public int EvaluateType(string value)
         {
             if (value == "True" || value == "False")
@@ -722,13 +731,14 @@ namespace InterpreterLib
             {
                 return Type.VARIABLE; // Variable
             }
+            else if (value.Contains('&') || value.Contains('|') || value.Contains("==") || value.Contains('>') || value.Contains('<') || value.Contains(">=") || value.Contains("<="))
+            {
+                return Type.OPERATION_BOOL;
+            }
             else if (value.Contains('+') || value.Contains('*') || value.Contains('/') || value.Contains('-') || value.Contains('^'))
             {
                 return Type.OPERATION_NUMBER; // Operation
-            } else if (value.Contains('&') || value.Contains('|') || value.Contains("==") || value.Contains('>') || value.Contains('<') || value.Contains(">=") || value.Contains("<="))
-            {   
-                return Type.OPERATION_BOOL;
-            }
+            } 
             else if (Functions.ContainsKey(value.Split('(')[0]))
             {
                 return Type.FUNCTION; // Function
