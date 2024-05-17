@@ -115,6 +115,9 @@ namespace InterpreterLib
                     }
 
                     EvaluateFunctionRegister(functionText.ToString());
+
+                    index--;
+
                 } else if (trimmedLine.StartsWith("for ")) // for var from x to y {}
                 { // Case of the registration of a loop
                     string loopFirstLine = trimmedLine[4..];
@@ -124,6 +127,9 @@ namespace InterpreterLib
                     string loopVarName = loopFirstLine.Split(' ')[0]; // Get the title of the loopVar
                     string loopFromName = loopFirstLine.Split(' ')[2]; // Get the title of the loopFrom
                     string loopToName = loopFirstLine.Split(' ')[4]; // Get the title of the loopTo
+                    loopToName = loopToName[..(loopToName.Length - 1)];
+
+                    if (!loopFirstLine.EndsWith(':')) { throw new Exception("Invalid syntax."); }
 
                     int loopFromType = EvaluateType(loopFromName);
                     int loopToType = EvaluateType(loopToName);
@@ -164,11 +170,37 @@ namespace InterpreterLib
                         this.EvaluateCode(loopCode.ToString());
                     }
 
+                    index--;
+
                 } 
+                else if (trimmedLine.StartsWith("if "))
+                {
+                    string loopFirstLine = trimmedLine[3..];
+                    StringBuilder ifCode = new StringBuilder();
+
+                    //if (!(firstLine.EndsWith('{'))) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
+                    string condition = loopFirstLine.Split(':')[0];
+
+                    index++;
+
+                    while (index < lines.Length && lines[index].StartsWith("\t")) //
+                    { // Get all lines until their are no tabulation and the line don't finish by the '}' character.
+                        ifCode.Append($"\n{lines[index][1..]}");
+                        index++;
+                    }
+
+                    if (EvaluateBooleanOperations(condition))
+                    {
+                        EvaluateCode(ifCode.ToString());
+                    }
+
+                    index--;
+                }
+                
                 else if (EvaluateType(trimmedLine) == Type.FUNCTION)
                 {
                     EvaluateFunctionCall(trimmedLine);
-                 }
+                }
                 else
                 {
                     throw new Exception($"Error. {trimmedLine} is not recognized as a correct expression. ");
@@ -208,7 +240,7 @@ namespace InterpreterLib
             int openBracketIndex = firstLine.IndexOf("(");
             int closeBracketIndex = firstLine.IndexOf(")");
 
-            if (openBracketIndex ==  -1 || closeBracketIndex == -1 || !(firstLine.EndsWith('{')) || functionTitle.Length == 0) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
+            if (openBracketIndex ==  -1 || closeBracketIndex == -1 || !(firstLine.EndsWith(':')) || functionTitle.Length == 0) { throw new Exception("Error. Invalid Syntax."); } // Throw new error in case of invalid syntax.
 
             Function function = new Function(functionTitle, lines[(firstLine.Length + 1)..], firstLine[(openBracketIndex + 1)..closeBracketIndex].Split(", ")); // Create a new Function objet that store all the informations about the new function.
             Functions[function.Name] = function; // Register the created function into the program function dictionnary.
